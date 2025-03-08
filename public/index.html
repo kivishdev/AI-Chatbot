@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Include html2canvas from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="navbar">
+        <div class="logo-container">
+            <img src="Designer.png" alt="Logo" class="logo">
+            <div class="header-title">Daksha AI</div>
+        </div>
+        <!-- Navigation Section -->
+        <nav class="nav-buttons" id="navbar">
+            <button class="hamburger-menu" id="hamburger-menu"><i class="fas fa-bars"></i></button>
+            <!-- Hamburger Menu Dropdown -->
+            <div class="dropdown-menu" id="dropdown-menu">
+                <a href="history.html">History</a>
+                <a href="About Us.html">About Us</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Suggested Prompts Section -->
+    <div class="suggested-prompts">
+        <!-- Dynamic prompts will be inserted here -->
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Chat Display Area -->
+        <h2 class="section-heading">Chats</h2>
+        <div id="chat-display-area"></div>
+
+        <!-- Input Bar -->
+        <div class="input-bar">
+            <input type="text" id="gemini-input" placeholder="Ask Daksha.....">
+            <button id="gemini-submit" class="primary-button"><i class="fas fa-paper-plane"></i></button>
+            <button id="voice-input" class="secondary-button"><i class="fas fa-microphone"></i></button>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

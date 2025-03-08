@@ -1,0 +1,233 @@
+/* General Body Styling */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #f0f0f5;
+  color: #212121;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header Styling */
+header {
+  background-color: #ffffff;
+  color: #212121;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  margin: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* History Content Section */
+.history-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.history-content h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #4e7fff;
+}
+
+/* Log Entry Styling */
+.log-entry {
+  background-color: #ffffff;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.log-entry h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #4e7fff;
+}
+
+.log-entry p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+/* Back Link Styling */
+.back-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link a {
+  color: #4e7fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
+
+/* Clear History Button Styling */
+.clear-history-btn {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.clear-history-btn button {
+  background-color: #ff4e4e;
+  border: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.clear-history-btn button:hover {
+  background-color: #cc3a3a;
+}
+
+/* ------------------- RESPONSIVE DESIGN ------------------- */
+
+/* Small Phones (320px–480px) */
+@media (max-width: 480px) {
+  header {
+      padding: 15px;
+      font-size: 18px;
+      margin: 10px;
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .history-content {
+      padding: 15px;
+      margin: 10px;
+  }
+
+  .history-content h2 {
+      font-size: 20px;
+  }
+
+  .log-entry {
+      padding: 12px;
+      margin: 8px 0;
+  }
+
+  .log-entry h3 {
+      font-size: 18px;
+  }
+
+  .log-entry p {
+      font-size: 14px;
+  }
+
+  .clear-history-btn button {
+      font-size: 14px;
+      padding: 8px 20px;
+  }
+
+  .back-link a {
+      font-size: 14px;
+  }
+}
+
+/* Medium Phones (481px–768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  header {
+      padding: 18px;
+      font-size: 22px;
+      margin: 15px;
+  }
+
+  .history-content {
+      padding: 18px;
+      margin: 15px;
+  }
+
+  .history-content h2 {
+      font-size: 22px;
+  }
+
+  .log-entry {
+      padding: 14px;
+      margin: 10px 0;
+  }
+
+  .log-entry h3 {
+      font-size: 19px;
+  }
+
+  .log-entry p {
+      font-size: 15px;
+  }
+
+  .clear-history-btn button {
+      font-size: 15px;
+      padding: 9px 22px;
+  }
+
+  .back-link a {
+      font-size: 15px;
+  }
+}
+
+/* Large Phones (769px–1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  header {
+      padding: 20px;
+      font-size: 24px;
+      margin: 20px;
+  }
+
+  .history-content {
+      padding: 20px;
+      margin: 20px;
+  }
+
+  .history-content h2 {
+      font-size: 24px;
+  }
+
+  .log-entry {
+      padding: 15px;
+      margin: 12px 0;
+  }
+
+  .log-entry h3 {
+      font-size: 20px;
+  }
+
+  .log-entry p {
+      font-size: 16px;
+  }
+
+  .clear-history-btn button {
+      font-size: 16px;
+      padding: 10px 25px;
+  }
+
+  .back-link a {
+      font-size: 16px;
+  }
+}
+
+/* High-Resolution Phones (Retina) */
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+     only screen and (min-resolution: 192dpi) {
+  body {
+      -webkit-font-smoothing: antialiased; /* For Chrome and Safari */
+      -moz-osx-font-smoothing: grayscale; /* For Firefox on macOS */
+  }
+}
