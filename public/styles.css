@@ -149,6 +149,8 @@ main {
   overflow-y: auto;
   background-color: #eceef0;
   border-radius: 20px;
+  /* Added padding-bottom to ensure content isn't hidden behind input bar */
+  padding-bottom: 80px;
 }
 
 /* Section Heading Styling */
@@ -163,7 +165,8 @@ main {
 /* Chat Display Area Styling */
 #chat-display-area {
   width: 90%;
-  max-height: 60vh;
+  /* Changed max-height to height for better flexibility */
+  height: calc(100vh - 250px);
   overflow-y: auto;
   padding: 5px;
   border: 1px solid #ccc;
@@ -172,6 +175,9 @@ main {
   margin-bottom: 10px;
   background: url('Designer.png') center/contain no-repeat, rgba(255, 255, 255, 0.7);
   background-blend-mode: overlay;
+  /* Ensure content stays above input bar */
+  position: relative;
+  z-index: 1;
 }
 
 /* Message Box Styling */
@@ -239,7 +245,12 @@ main {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 1000;
+  /* Keep input bar on top but below other important elements */
+  z-index: 999;
+  /* Added max-width and auto margins to center it */
+  max-width: 95%;
+  margin: 0 auto;
+  right: 0;
 }
 
 .input-bar input {
@@ -333,6 +344,11 @@ main {
   width: auto;
 }
 
+/* Auto-scroll trigger for new messages */
+.scroll-to-view {
+  scroll-behavior: smooth;
+}
+
 /* Media Queries for Mobile Devices */
 @media only screen and (max-width: 767px) {
   header {
@@ -369,12 +385,15 @@ main {
   main {
     padding: 10px;
     border-radius: 10px;
+    /* Increased padding for mobile */
+    padding-bottom: 100px;
   }
 
   #chat-display-area {
     width: 100%;
     padding: 5px;
-    max-height: 50vh;
+    /* Adjusted height for mobile */
+    height: calc(100vh - 230px);
   }
 
   .message-box {
@@ -390,6 +409,8 @@ main {
   .input-bar {
     padding: 5px;
     border-radius: 10px;
+    /* Adjusted for mobile */
+    max-width: 98%;
   }
 
   .input-bar input {
