@@ -1,17 +1,24 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable CORS for all routes
+app.use(cors()); // <-- Add this line
+
 // Check if the API key is set in the .env file
 if (!process.env.API_KEY) {
   console.error('API key is missing. Please set it in the .env file.');
   process.exit(1);
 }
+
+// Enable CORS for all routes
+app.use(cors()); // <-- Add this line
 
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
