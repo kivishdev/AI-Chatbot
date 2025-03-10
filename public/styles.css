@@ -351,86 +351,204 @@ main {
 
 /* Media Queries for Mobile Devices */
 @media only screen and (max-width: 767px) {
-  header {
-    padding: 5px;
-    font-size: 18px;
-    margin: 10px;
-  }
-  
-  .header-title {
-    font-size: 25px;
-  }
-
+  /* Sticky header */
   .navbar {
+    position: sticky;
+    top: 0;
     height: 40px;
     padding: 5px 10px;
     margin: 5px;
     border-radius: 10px;
+    z-index: 1010;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  header {
+    padding: 5px;
+    font-size: 18px;
+    margin: 8px 5px;
+  }
+  
+  .header-title {
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .logo {
+    height: 30px;
+    width: 30px;
+    margin-right: 5px;
   }
 
   .nav-buttons {
     gap: 5px;
   }
 
+  /* Suggested prompts */
   .suggested-prompts {
-    margin: 5px 10px;
-    padding: 5px;
-    gap: 5px;
+    margin: 10px 5px;
+    padding: 8px 5px;
+    gap: 8px;
+    overflow-y: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .suggested-prompts::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
   }
 
   .prompt {
-    padding: 5px 8px;
+    padding: 6px 10px;
+    margin-right: 5px;
+    border-radius: 15px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 13px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
+  /* Main section */
   main {
-    padding: 10px;
-    border-radius: 10px;
-    /* Increased padding for mobile */
-    padding-bottom: 100px;
+    padding: 8px 5px;
+    border-radius: 8px;
+    padding-bottom: 85px; /* Space for input bar */
+    margin: 5px;
   }
 
+  .section-heading {
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  /* Chat display area */
   #chat-display-area {
     width: 100%;
+    height: calc(100vh - 200px); /* Dynamic height */
     padding: 5px;
-    /* Adjusted height for mobile */
-    height: calc(100vh - 230px);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    background-size: 40% auto;
+    transition: height 0.3s ease;
+  }
+  
+  /* When keyboard is active - handle with JS */
+  #chat-display-area.keyboard-active {
+    height: calc(100vh - 350px);
+  }
+
+  .message-box-container {
+    margin-bottom: 8px;
   }
 
   .message-box {
     padding: 8px;
     width: 90%;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .message-box h3 {
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+
+  .message-box p {
+    font-size: 13px;
+    line-height: 1.4;
   }
 
   .read-aloud-icon {
+    font-size: 16px;
     margin-left: 5px;
-    margin-right: -20px;
+    margin-right: -15px;
   }
 
+  /* Improved input bar for mobile */
   .input-bar {
-    padding: 5px;
-    border-radius: 10px;
-    /* Adjusted for mobile */
-    max-width: 98%;
+    padding: 8px 5px;
+    border-radius: 20px;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 92%;
+    width: 92%;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: bottom 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  /* When keyboard is visible - will be toggled with JS */
+  .input-bar.keyboard-active {
+    bottom: 5px;
+    border-radius: 15px;
+    padding: 6px 5px;
   }
 
   .input-bar input {
-    padding: 5px;
-    width: 70%;
-    font-size: 12px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 15px;
+    width: 100%;
+    height: 36px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(240, 240, 245, 0.8);
   }
 
-  .primary-button, .secondary-button, #voice-input {
-    padding: 8px 15px;
-    font-size: 12px;
+  .input-bar input:focus {
+    box-shadow: 0 0 0 2px rgba(78, 127, 255, 0.3);
   }
 
-  .google-search-icon {
-    width: 20px;
-    height: 20px;
+  /* Buttons on mobile */
+  .primary-button, 
+  .secondary-button, 
+  #voice-input {
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 36px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+  }
+  
+  .input-bar button {
+    flex-shrink: 0;
   }
 
-  .logo {
-    height: 40px;
-    margin-right: 5px;
+  /* Optimize for different mobile heights */
+  @media (max-height: 600px) {
+    #chat-display-area {
+      height: calc(100vh - 180px);
+    }
+    
+    #chat-display-area.keyboard-active {
+      height: calc(100vh - 270px);
+    }
+    
+    .input-bar {
+      bottom: 5px;
+      padding: 5px;
+    }
+  }
+  
+  /* Prevent iOS Safari bottom bar issues */
+  @supports (-webkit-touch-callout: none) {
+    .input-bar {
+      bottom: 15px;
+    }
+    
+    .input-bar.keyboard-active {
+      bottom: 5px; 
+    }
   }
 }

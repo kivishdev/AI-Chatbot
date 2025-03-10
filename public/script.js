@@ -106,6 +106,9 @@ async function handleSubmit() {
 
         storeInHistory(prompt, response);
         storeInServer(prompt, response);
+        
+        // Scroll to bottom when new message is added
+        window.scrollToBottom();
     } else {
         alert('Please enter a prompt!');
     }
@@ -227,4 +230,64 @@ document.addEventListener('keydown', (event) => {
         event.preventDefault();
         captureScreenshot();
     }
+});
+
+// Handle mobile keyboard appearance
+document.addEventListener('DOMContentLoaded', function() {
+  const inputField = document.getElementById('gemini-input');
+  const chatDisplay = document.getElementById('chat-display-area');
+  const inputBar = document.querySelector('.input-bar');
+  
+  // Check if it's a mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    // When input is focused (keyboard appears)
+    inputField.addEventListener('focus', function() {
+      chatDisplay.classList.add('keyboard-active');
+      inputBar.classList.add('keyboard-active');
+      
+      // Scroll to bottom when keyboard appears
+      setTimeout(() => {
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      }, 100);
+    });
+    
+    // When input loses focus (keyboard disappears)
+    inputField.addEventListener('blur', function() {
+      chatDisplay.classList.remove('keyboard-active');
+      inputBar.classList.remove('keyboard-active');
+    });
+    
+    // iOS specific handling
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      // Scroll window to input on focus (iOS specific fix)
+      inputField.addEventListener('focus', function() {
+        setTimeout(function() {
+          window.scrollTo(0, document.body.scrollHeight);
+        }, 300);
+      });
+    }
+    
+    // Visual feedback when sending messages
+    document.getElementById('gemini-submit').addEventListener('click', function() {
+      if (inputField.value.trim() !== '') {
+        // Add a subtle animation
+        this.classList.add('sending');
+        setTimeout(() => {
+          this.classList.remove('sending');
+        }, 300);
+      }
+    });
+  }
+  
+  // Always scroll to bottom when new messages arrive
+  // This function should be called whenever a new message is added
+  function scrollToBottom() {
+    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+  }
+  
+  // Expose this function globally so it can be called from your chat logic
+  window.scrollToBottom = scrollToBottom;
 });
