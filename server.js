@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
 require('dotenv').config();
 
 const app = express();
@@ -18,8 +18,7 @@ if (!process.env.API_KEY) {
 }
 
 // Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' }); // Use a stable model
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Serve static files (HTML, CSS, JS) from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,17 +34,12 @@ app.get('/api/gemini', async (req, res) => {
     }
 
     try {
-        const generationConfig = {};
-        if (language) {
-            generationConfig.language = language;
-        }
-
-        const result = await model.generateContent({
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
             contents: prompt,
-            generationConfig: generationConfig,
         });
-        const response = result.response;
-        const outputText = response.text();
+
+        const outputText = response.text;
         console.log('Generated Response:', outputText);
 
         const timestamp = new Date().toISOString();
@@ -94,8 +88,11 @@ app.get('/api/suggested-prompts', async (req, res) => {
     console.log('Fetching Suggested Prompts');
 
     try {
-        const result = await model.generateContent(prompt);
-        const outputText = result.response.text();
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.0-flash',
+            contents: prompt,
+        });
+        const outputText = response.text;
         const suggestedPrompts = outputText.split('\n').filter(p => p.trim().length > 0);
         res.json({ prompts: suggestedPrompts });
     } catch (err) {
