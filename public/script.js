@@ -125,7 +125,7 @@ const fetchGeminiResponse = async (prompt) => {
         return data.response || 'No response available.';
     } catch (error) {
         console.error('Error:', error.message);
-        return 'Sorry, something went wrong. Please try again later.';
+        return 'Sorry, Daksha is not connected. Please try again later.';
     }
 };
 
