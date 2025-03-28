@@ -110,7 +110,7 @@ async function handleSubmit() {
         // Scroll to bottom when new message is added
         window.scrollToBottom();
     } else {
-        alert('Please enter a prompt!');
+        alert('Enter a prompt!');
     }
 }
 
