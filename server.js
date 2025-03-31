@@ -35,7 +35,7 @@ app.get('/api/gemini', async (req, res) => {
         const response = await ai.models.generateContent({
             model: 'gemini-2.0-flash',
             contents: prompt,
-            tools: [{ googleSearch: {} }] // Explicitly enable grounding
+            tools: [{ googleSearch: { force: true } }] // Explicitly enable grounding
         });
 
         const outputText = response.text || 'No response generated';
@@ -74,8 +74,6 @@ app.get('/api/gemini', async (req, res) => {
         });
     }
 });
-
-// ... (Rest of your code) ...
 
 // API Endpoint: Store interaction
 app.post('/api/store-interaction', (req, res) => {
