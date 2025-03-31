@@ -8,23 +8,21 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all routes
+// Enable CORS and static file serving
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
-// Check if the API key is set in the .env file
+// Validate API key
 if (!process.env.API_KEY) {
     console.error('API key is missing. Please set it in the .env file.');
     process.exit(1);
 }
 
-// Initialize Google Generative AI
+// Initialize Google Generative AI with Gemini 2.0 Flash
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Serve static files (HTML, CSS, JS) from the "public" folder
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-
-// API Endpoint: Generate content using Gemini API
+// API Endpoint: Generate content with Google Search grounding
 app.get('/api/gemini', async (req, res) => {
     const { prompt, language } = req.query;
     console.log('Received Prompt:', prompt);
@@ -37,30 +35,47 @@ app.get('/api/gemini', async (req, res) => {
         const response = await ai.models.generateContent({
             model: 'gemini-2.0-flash',
             contents: prompt,
+            tools: [{ googleSearch: {} }] // Explicitly enable grounding
         });
 
-        const outputText = response.text;
+        const outputText = response.text || 'No response generated';
+        const groundingMetadata = response.candidates?.[0]?.groundingMetadata || {};
         console.log('Generated Response:', outputText);
+        console.log('Grounding Metadata:', groundingMetadata);
 
+        // Log interaction with grounding details
         const timestamp = new Date().toISOString();
-        const formattedOutput = `[${timestamp}] Prompt: "${prompt}"\nResponse: ${outputText}\n`;
+        const formattedOutput = `[${timestamp}] Prompt: "${prompt}"\nResponse: ${outputText}\nGrounding: ${JSON.stringify(groundingMetadata)}\n`;
+        fs.appendFileSync('output_log.txt', formattedOutput);
 
-        // Log the output to a file
-        fs.appendFileSync('output_log.txt', `${formattedOutput}\n`);
+        // Save to interactions.json
+        let interactions = [];
+        try {
+            interactions = JSON.parse(fs.readFileSync('interactions.json', 'utf-8') || '[]');
+        } catch (err) {
+            console.warn('Failed to read interactions.json, starting fresh:', err.message);
+        }
+        interactions.push({ prompt, response: outputText, language: language || 'en-US' });
+        fs.writeFileSync('interactions.json', JSON.stringify(interactions, null, 2));
 
-        // Save interaction to server storage
-        const interaction = { prompt, response: outputText, language: language || 'en-US' };
-        const interactions = JSON.parse(fs.readFileSync('interactions.json', 'utf-8') || '[]');
-        interactions.push(interaction);
-        fs.writeFileSync('interactions.json', JSON.stringify(interactions));
-
-        // Send the response back to the client
-        res.json({ response: outputText });
+        // Send response with grounding metadata
+        res.json({
+            response: outputText,
+            grounding: {
+                sources: groundingMetadata.groundingChunks || [],
+                searchSuggestions: groundingMetadata.searchEntryPoint?.renderedContent || ''
+            }
+        });
     } catch (err) {
-        console.error('Error generating content:', err); // Log the full error
-        res.status(500).json({ error: 'Failed to generate content' });
+        console.error('Error generating content:', err.message, err.stack);
+        res.status(500).json({
+            error: 'Failed to generate content',
+            details: err.message
+        });
     }
 });
+
+// ... (Rest of your code) ...
 
 // API Endpoint: Store interaction
 app.post('/api/store-interaction', (req, res) => {
@@ -68,13 +83,9 @@ app.post('/api/store-interaction', (req, res) => {
     const interaction = { prompt, response, language: language || 'en-US' };
 
     try {
-        // Read existing interactions
         const interactions = JSON.parse(fs.readFileSync('interactions.json', 'utf-8') || '[]');
-
-        // Append the new interaction
         interactions.push(interaction);
-        fs.writeFileSync('interactions.json', JSON.stringify(interactions));
-
+        fs.writeFileSync('interactions.json', JSON.stringify(interactions, null, 2));
         res.status(200).json({ message: 'Interaction stored' });
     } catch (err) {
         console.error('Error storing interaction:', err.message);
@@ -82,7 +93,7 @@ app.post('/api/store-interaction', (req, res) => {
     }
 });
 
-// API Endpoint: Fetch suggested prompts from Gemini
+// API Endpoint: Fetch suggested prompts
 app.get('/api/suggested-prompts', async (req, res) => {
     const prompt = "Give me some suggested prompts for a chatbot.";
     console.log('Fetching Suggested Prompts');
@@ -92,7 +103,8 @@ app.get('/api/suggested-prompts', async (req, res) => {
             model: 'gemini-2.0-flash',
             contents: prompt,
         });
-        const outputText = response.text;
+
+        const outputText = response.text || '';
         const suggestedPrompts = outputText.split('\n').filter(p => p.trim().length > 0);
         res.json({ prompts: suggestedPrompts });
     } catch (err) {
@@ -101,7 +113,7 @@ app.get('/api/suggested-prompts', async (req, res) => {
     }
 });
 
-// Default fallback for invalid routes
+// 404 Fallback
 app.use((req, res) => {
     res.status(404).send('<h1>404 - Page Not Found</h1><p>The page you are looking for does not exist.</p>');
 });
