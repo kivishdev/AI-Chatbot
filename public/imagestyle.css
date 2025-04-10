@@ -1,3 +1,43 @@
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #181818;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+}
+
+.navbar-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navbar-links li a:hover {
+  color: #00ffd5;
+}
+
+
+
 /* Google Fonts applied */
 body {
   margin: 0;
@@ -169,6 +209,33 @@ button:hover {
 @media (max-width: 768px) {
   body {
     padding: 1rem;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .navbar-links li a {
+    font-size: 1rem;
+    padding: 0.4rem 0;
+  }
+
+  .container h1 {
+    font-size: 1.5rem;
+    text-align: center;
   }
 
   input[type="text"]#prompt {
