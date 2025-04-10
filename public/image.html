@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Image Generator</title>
+  <link rel="stylesheet" href="imagestyle.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 AI Image Generator</h1>
+    <form id="prompt-form">
+      <input type="text" id="prompt" placeholder="Enter a prompt..." required />
+      <button type="submit">Generate</button>
+    </form>
+
+    <div id="image-output"></div>
+
+    <div id="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+    <div id="loading-text" class="fancy-text">✨ Generating your AI image...</div>
+  </div>
+
+  <section id="previous-images-section">
+    <h2>🖼️ Previously Generated Images</h2>
+    <div id="previous-images">
+      <!-- These will be added dynamically now -->
+    </div>
+  </section>
+  
+  <script src="image.js"></script>
+</body>
+</html>

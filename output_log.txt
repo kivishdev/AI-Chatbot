@@ -1,0 +1,4 @@
+[2025-04-10T18:55:26.356Z] Prompt: "hey whats your name"
+Response: I am a large language model, trained by Google. I don't have a name.
+
+Grounding: {}
