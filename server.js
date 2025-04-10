@@ -52,7 +52,16 @@ app.get("/api/gemini", async (req, res) => {
     const outputText = response.text || "No response generated";
     const groundingMetadata = response.candidates?.[0]?.groundingMetadata || {};
 
-    const timestamp = new Date().toISOString();
+     // ⬇️ ADD THIS HERE
+  const timestamp = new Date().toISOString();
+  console.log("====== Gemini Chat Response ======");
+  console.log(`🕒 Timestamp: ${timestamp}`);
+  console.log(`🧠 Prompt: ${prompt}`);
+  console.log(`💬 Response: ${outputText}`);
+  console.log(`🌐 Language: ${language || 'en-US'}`);
+  console.log(`🔎 Grounding Metadata:`, JSON.stringify(groundingMetadata, null, 2));
+  console.log("===================================");
+
     const formattedOutput = `[${timestamp}] Prompt: "${prompt}"\nResponse: ${outputText}\nGrounding: ${JSON.stringify(groundingMetadata)}\n`;
     fs.appendFileSync("output_log.txt", formattedOutput);
 
