@@ -1,8 +1,0 @@
-[2025-04-10T18:55:26.356Z] Prompt: "hey whats your name"
-Response: I am a large language model, trained by Google. I don't have a name.
-
-Grounding: {}
-[2025-04-10T19:08:41.766Z] Prompt: "hey whats you name"
-Response: I am a large language model, trained by Google. I don't have a personal name. You can just call me Gemini.
-
-Grounding: {}

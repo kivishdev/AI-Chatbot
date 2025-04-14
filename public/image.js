@@ -1,9 +1,110 @@
 const form = document.getElementById("prompt-form");
 const promptInput = document.getElementById("prompt");
 const outputDiv = document.getElementById("image-output");
+const descriptionDiv = document.getElementById("description-output");
 const loadingSpinner = document.getElementById("loading-spinner");
 const loadingText = document.getElementById("loading-text");
+const imageUpload = document.getElementById("image-upload");
+const previewContainer = document.getElementById("preview-container");
+const previewImage = document.getElementById("preview-image");
+const uploadPrompt = document.getElementById("upload-prompt");
+const clearImageBtn = document.getElementById("clear-image-btn");
+const modeIndicator = document.getElementById("mode-indicator");
 
+// Variables to store the uploaded image
+let uploadedImage = null;
+let uploadedImageType = null;
+
+// Update mode indicator based on image presence
+function updateModeIndicator() {
+  if (uploadedImage) {
+    modeIndicator.innerHTML = `Current Mode: <strong>Edit Uploaded Image</strong>`;
+    loadingText.textContent = "✨ Editing your image...";
+  } else {
+    modeIndicator.innerHTML = `Current Mode: <strong>Generate New Images</strong>`;
+    loadingText.textContent = "✨ Generating your AI image...";
+  }
+}
+
+// Handle image upload
+imageUpload.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  // Check file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    alert("File size exceeds 5MB limit. Please choose a smaller file.");
+    imageUpload.value = "";
+    return;
+  }
+  
+  // Read and preview the image
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    previewImage.src = event.target.result;
+    uploadedImage = event.target.result.split(",")[1]; // Store base64 data without prefix
+    uploadedImageType = file.type;
+    
+    // Show preview and clear button
+    previewContainer.style.display = "block";
+    uploadPrompt.style.display = "none";
+    clearImageBtn.style.display = "block";
+    
+    // Update mode indicator
+    updateModeIndicator();
+    
+    // Update placeholder text to guide the user
+    promptInput.placeholder = "Describe how to edit this image...";
+  };
+  
+  reader.readAsDataURL(file);
+});
+
+// Handle drag and drop
+const uploadPreview = document.getElementById("upload-preview");
+uploadPreview.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  uploadPreview.classList.add("dragover");
+});
+
+uploadPreview.addEventListener("dragleave", () => {
+  uploadPreview.classList.remove("dragover");
+});
+
+uploadPreview.addEventListener("drop", (e) => {
+  e.preventDefault();
+  uploadPreview.classList.remove("dragover");
+  
+  if (e.dataTransfer.files.length) {
+    imageUpload.files = e.dataTransfer.files;
+    // Trigger the change event manually
+    const event = new Event("change");
+    imageUpload.dispatchEvent(event);
+  }
+});
+
+// Clear image button
+clearImageBtn.addEventListener("click", () => {
+  clearUploadedImage();
+});
+
+function clearUploadedImage() {
+  uploadedImage = null;
+  uploadedImageType = null;
+  imageUpload.value = "";
+  previewImage.src = "";
+  previewContainer.style.display = "none";
+  uploadPrompt.style.display = "block";
+  clearImageBtn.style.display = "none";
+  
+  // Reset placeholder text
+  promptInput.placeholder = "Enter a prompt...";
+  
+  // Update mode indicator
+  updateModeIndicator();
+}
+
+// Form submission with image support
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -11,13 +112,23 @@ form.addEventListener("submit", async (e) => {
   if (!prompt) return;
 
   outputDiv.innerHTML = "";
+  descriptionDiv.innerHTML = "";
   showLoading(true);
 
   try {
+    // Prepare the payload with prompt and image (if any)
+    const payload = { prompt };
+    if (uploadedImage) {
+      payload.image = {
+        data: uploadedImage,
+        mimeType: uploadedImageType
+      };
+    }
+
     const response = await fetch("/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();
@@ -30,11 +141,14 @@ form.addEventListener("submit", async (e) => {
     }
 
     if (data.success && data.images.length > 0) {
+      // Display images
       data.images.forEach((img, index) => {
         const container = document.createElement("div");
+        container.className = "image-container";
 
         const imageElement = document.createElement("img");
         imageElement.src = `data:${img.mimeType};base64,${img.base64}`;
+        imageElement.alt = "Generated image";
 
         const downloadButton = document.createElement("button");
         downloadButton.className = "download-btn";
@@ -53,6 +167,12 @@ form.addEventListener("submit", async (e) => {
         // Add to previously generated section
         addToPreviousImages(img.base64, img.mimeType);
       });
+
+      // Display description text (if available)
+      if (data.description) {
+        descriptionDiv.innerHTML = `<p><strong>Description:</strong><br />${data.description}</p>`;
+      }
+
     } else {
       outputDiv.innerHTML = "<p>❌ No image generated. Try a different prompt.</p>";
     }
@@ -75,6 +195,7 @@ function addToPreviousImages(base64, mimeType) {
 
   const img = document.createElement("img");
   img.src = `data:${mimeType};base64,${base64}`;
+  img.alt = "Generated image";
 
   const removeBtn = document.createElement("button");
   removeBtn.innerText = "Remove";
@@ -86,3 +207,6 @@ function addToPreviousImages(base64, mimeType) {
 
   document.getElementById("previous-images").appendChild(container);
 }
+
+// Initialize mode indicator on page load
+updateModeIndicator();
