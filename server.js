@@ -6,9 +6,11 @@ import fs from "node:fs";
 import mime from "mime-types";
 import path from "node:path";
 import cors from "cors";
+import helmet from "helmet";
 import { fileURLToPath } from "node:url";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { GoogleGenAI } from "@google/genai";
+
 
 dotenv.config();
 const app = express();
@@ -19,12 +21,13 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors());
+app.use(helmet()); // ✅ Helmet added here
 app.use(express.json({ limit: "10mb" })); // for image upload
 app.use(express.static(path.join(__dirname, "public")));
 
 // Serve default HTML (optional: set to chatbot or image UI as needed)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "chat.html")); // Or image.html
+  res.sendFile(path.join(__dirname, "public", "image.html")); // Or image.html
 });
 
 // Check API key
