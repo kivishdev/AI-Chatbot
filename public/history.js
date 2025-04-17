@@ -28,10 +28,22 @@ const loadHistory = () => {
 const clearHistory = () => {
     // Remove the history data from localStorage
     localStorage.removeItem('history');
-
+    
+    // Show confirmation to user
+    alert('History cleared successfully!');
+    
     // Reload the history container
-    loadHistory();  // Reload the history after clearing
+    loadHistory();
 };
 
-// Load the history when the page loads
-window.onload = loadHistory;
+// Initialize everything when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Load the history
+    loadHistory();
+    
+    // Set up event listener for the clear history button
+    const clearBtn = document.getElementById('clearHistoryBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearHistory);
+    }
+});

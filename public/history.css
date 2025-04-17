@@ -2,101 +2,201 @@
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background: #f0f0f5;
+  background: #f5f7fa;
   color: #212121;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 /* Header Styling */
 header {
-  background-color: #ffffff;
-  color: #212121;
-  padding: 20px;
+  background: linear-gradient(135deg, #4e7fff, #6e54c4);
+  color: white;
+  padding: 22px;
   text-align: center;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(78, 127, 255, 0.2);
+  border-radius: 12px;
   margin: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.header-title {
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.header-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+}
+
+/* Content Wrapper for scrolling */
+.content-wrapper {
+  flex: 1;
+  padding: 0 20px;
+  overflow-y: auto;
 }
 
 /* History Content Section */
 .history-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 850px;
+  margin: 0 auto 30px auto;
+  padding: 25px;
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.history-content:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .history-content h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 28px;
+  margin-bottom: 25px;
   text-align: center;
   color: #4e7fff;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.history-content h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(to right, #4e7fff, #6e54c4);
+  border-radius: 2px;
 }
 
 /* Log Entry Styling */
 .log-entry {
   background-color: #ffffff;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+  border-left: 4px solid #4e7fff;
+  transition: all 0.2s ease;
+}
+
+.log-entry:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
 }
 
 .log-entry h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 12px;
   color: #4e7fff;
+  display: flex;
+  align-items: center;
+}
+
+.log-entry h3::before {
+  content: '📝';
+  margin-right: 8px;
+  font-size: 20px;
 }
 
 .log-entry p {
   font-size: 16px;
-  margin: 5px 0;
+  margin: 10px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f5;
+}
+
+.log-entry p:last-child {
+  border-bottom: none;
+}
+
+.log-entry p strong {
+  color: #4e7fff;
+  font-weight: 600;
+  margin-right: 5px;
+  display: inline-block;
 }
 
 /* Back Link Styling */
 .back-link {
   text-align: center;
-  margin-top: 20px;
+  margin: 25px 0;
 }
 
 .back-link a {
   color: #4e7fff;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: rgba(78, 127, 255, 0.1);
 }
 
 .back-link a:hover {
-  text-decoration: underline;
+  background-color: rgba(78, 127, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Clear History Button Styling */
 .clear-history-btn {
   text-align: center;
-  margin-top: 20px;
+  margin: 15px 0 30px 0;
 }
 
 .clear-history-btn button {
-  background-color: #ff4e4e;
+  background: linear-gradient(135deg, #ff4e4e, #ff6b4e);
   border: none;
   color: white;
   font-size: 16px;
-  padding: 10px 25px;
-  border-radius: 25px;
+  font-weight: 500;
+  padding: 12px 28px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 78, 78, 0.2);
 }
 
 .clear-history-btn button:hover {
-  background-color: #cc3a3a;
+  background: linear-gradient(135deg, #ff3838, #ff5b3e);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 78, 78, 0.3);
+}
+
+.clear-history-btn button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(255, 78, 78, 0.25);
+}
+
+/* No History Message */
+#history-container p:only-child {
+  text-align: center;
+  padding: 30px;
+  font-size: 18px;
+  color: #888;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  margin: 20px 0;
 }
 
 /* ------------------- RESPONSIVE DESIGN ------------------- */
@@ -104,130 +204,181 @@ header {
 /* Small Phones (320px–480px) */
 @media (max-width: 480px) {
   header {
-      padding: 15px;
-      font-size: 18px;
-      margin: 10px;
-      flex-direction: column;
-      gap: 10px;
+    padding: 15px;
+    font-size: 20px;
+    margin: 10px;
+    border-radius: 10px;
+  }
+
+  .header-title::after {
+    width: 40px;
   }
 
   .history-content {
-      padding: 15px;
-      margin: 10px;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 12px;
   }
 
   .history-content h2 {
-      font-size: 20px;
+    font-size: 22px;
+    padding-bottom: 10px;
+  }
+
+  .history-content h2::after {
+    width: 60px;
   }
 
   .log-entry {
-      padding: 12px;
-      margin: 8px 0;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
   }
 
   .log-entry h3 {
-      font-size: 18px;
+    font-size: 18px;
   }
 
   .log-entry p {
-      font-size: 14px;
+    font-size: 14px;
+    padding: 6px 0;
   }
 
   .clear-history-btn button {
-      font-size: 14px;
-      padding: 8px 20px;
+    font-size: 14px;
+    padding: 10px 22px;
   }
 
   .back-link a {
-      font-size: 14px;
+    font-size: 14px;
   }
 }
 
 /* Medium Phones (481px–768px) */
 @media (min-width: 481px) and (max-width: 768px) {
   header {
-      padding: 18px;
-      font-size: 22px;
-      margin: 15px;
+    padding: 18px;
+    font-size: 24px;
+    margin: 15px;
   }
 
   .history-content {
-      padding: 18px;
-      margin: 15px;
+    padding: 20px;
+    margin: 15px;
   }
 
   .history-content h2 {
-      font-size: 22px;
+    font-size: 24px;
   }
 
   .log-entry {
-      padding: 14px;
-      margin: 10px 0;
+    padding: 16px;
+    margin: 12px 0;
   }
 
   .log-entry h3 {
-      font-size: 19px;
+    font-size: 20px;
   }
 
   .log-entry p {
-      font-size: 15px;
+    font-size: 15px;
+    padding: 7px 0;
   }
 
   .clear-history-btn button {
-      font-size: 15px;
-      padding: 9px 22px;
+    font-size: 15px;
+    padding: 11px 24px;
   }
 
   .back-link a {
-      font-size: 15px;
+    font-size: 15px;
   }
 }
 
 /* Large Phones (769px–1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
   header {
-      padding: 20px;
-      font-size: 24px;
-      margin: 20px;
+    padding: 20px;
+    font-size: 25px;
   }
 
   .history-content {
-      padding: 20px;
-      margin: 20px;
+    padding: 22px;
   }
 
   .history-content h2 {
-      font-size: 24px;
+    font-size: 26px;
   }
 
   .log-entry {
-      padding: 15px;
-      margin: 12px 0;
+    padding: 18px;
+    margin: 14px 0;
   }
 
   .log-entry h3 {
-      font-size: 20px;
+    font-size: 21px;
   }
 
   .log-entry p {
-      font-size: 16px;
+    font-size: 16px;
   }
+}
 
-  .clear-history-btn button {
-      font-size: 16px;
-      padding: 10px 25px;
+/* Animation for new log entries */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .back-link a {
-      font-size: 16px;
-  }
+.log-entry {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: #4e7fff;
+}
+
+.loading::after {
+  content: '...';
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* Empty state styling */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state::before {
+  content: '📃';
+  font-size: 40px;
+  margin-bottom: 15px;
 }
 
 /* High-Resolution Phones (Retina) */
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
      only screen and (min-resolution: 192dpi) {
   body {
-      -webkit-font-smoothing: antialiased; /* For Chrome and Safari */
-      -moz-osx-font-smoothing: grayscale; /* For Firefox on macOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
