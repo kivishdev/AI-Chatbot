@@ -1,34 +1,219 @@
-// Toggle the hamburger menu dropdown
-document.getElementById('hamburger-menu').addEventListener('click', () => {
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    const menuButton = document.getElementById('hamburger-menu');
-    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    dropdownMenu.style.top = `${menuButton.offsetTop + menuButton.offsetHeight}px`;
-});
-
-// Event Listeners for Gemini submission
+// DOM Elements
+const hamburgerMenu = document.getElementById('hamburger-menu');
+const dropdownMenu = document.getElementById('dropdown-menu');
 const submitButton = document.getElementById('gemini-submit');
 const inputField = document.getElementById('gemini-input');
+const voiceButton = document.getElementById('voice-input');
+const chatDisplayArea = document.getElementById('chat-display-area');
+const clearChatButton = document.getElementById('clear-chat');
+const statusIndicator = document.getElementById('status-indicator');
 
+// Toggle the hamburger menu dropdown
+hamburgerMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', () => {
+    dropdownMenu.style.display = 'none';
+});
+
+// Event Listeners for submission
 submitButton.addEventListener('click', handleSubmit);
 inputField.addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
-        event.preventDefault();  // Prevent the default action (form submission)
+        event.preventDefault();
         handleSubmit();
     }
 });
 
+// Clear chat button
+clearChatButton.addEventListener('click', clearChat);
+
 // Handle voice input
-const voiceButton = document.getElementById('voice-input');
 voiceButton.addEventListener('click', startVoiceRecognition);
 
+// Initialize with welcome message if chat is empty
+if (chatDisplayArea.children.length === 0) {
+    displayWelcomeMessage();
+}
+
+// Handle form submission
+async function handleSubmit() {
+    const prompt = inputField.value.trim();
+    
+    if (prompt) {
+        // Add user message to chat
+        addUserMessage(prompt);
+        inputField.value = '';
+        
+        // Show typing indicator
+        const typingIndicator = showTypingIndicator();
+        
+        try {
+            // Update status
+            updateStatus('typing', 'Daksha AI is typing...');
+            
+            // Get response from Gemini
+            const response = await fetchGeminiResponse(prompt);
+            
+            // Remove typing indicator
+            chatDisplayArea.removeChild(typingIndicator);
+            
+            // Add bot response to chat
+            addBotMessage(response);
+            
+            // Store in history
+            storeInHistory(prompt, response);
+            
+            // Update status
+            updateStatus('ready', 'Daksha AI is ready');
+        } catch (error) {
+            // Remove typing indicator
+            chatDisplayArea.removeChild(typingIndicator);
+            
+            // Show error message
+            addBotMessage('Sorry, I encountered an error. Please try again later.');
+            
+            // Update status
+            updateStatus('error', 'Connection error');
+            setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
+            
+            console.error('Error:', error.message);
+        }
+        
+        // Scroll to bottom
+        scrollToBottom();
+    }
+}
+
+// Display welcome message
+function displayWelcomeMessage() {
+    chatDisplayArea.innerHTML = `
+        <div class="welcome-message">
+            <img src="Designer.png" alt="Daksha AI" class="welcome-logo">
+            <h3>Welcome to Daksha AI</h3>
+            <p>Ask me anything! I can help with information, creative ideas, and more.</p>
+        </div>
+    `;
+}
+
+// Clear chat function
+function clearChat() {
+    chatDisplayArea.innerHTML = '';
+    displayWelcomeMessage();
+    // Optional: Clear local chat history if needed
+    // localStorage.removeItem('currentChat');
+}
+
+// Add user message to chat
+function addUserMessage(message) {
+    const messageBox = document.createElement('div');
+    messageBox.className = 'message-box-container';
+    messageBox.innerHTML = `
+        <div class="message-box user">
+            <p>${message}</p>
+            <a href="https://www.google.com/search?q=${encodeURIComponent(message)}" target="_blank" aria-label="Search on Google">
+                <img src="google-logo.png" alt="Google Search" class="google-search-icon">
+            </a>
+        </div>
+    `;
+    chatDisplayArea.appendChild(messageBox);
+    scrollToBottom();
+}
+
+// Add bot message to chat
+function addBotMessage(message) {
+    const messageBox = document.createElement('div');
+    messageBox.className = 'message-box-container';
+    messageBox.innerHTML = `
+        <div class="message-box bot">
+            <p></p>
+        </div>
+        <div class="message-actions">
+            <i class="fas fa-volume-up read-aloud-icon" title="Read aloud"></i>
+            <i class="fas fa-copy copy-icon" title="Copy text"></i>
+        </div>
+    `;
+    chatDisplayArea.appendChild(messageBox);
+    
+    // Add event listeners for actions
+    const readAloudIcon = messageBox.querySelector('.read-aloud-icon');
+    const copyIcon = messageBox.querySelector('.copy-icon');
+    const messageContent = messageBox.querySelector('.message-box p');
+    
+    // Type message with animation
+    typeMessage(messageContent, message);
+    
+    // Read aloud functionality
+    readAloudIcon.addEventListener('click', () => {
+        const utterance = new SpeechSynthesisUtterance(message);
+        speechSynthesis.speak(utterance);
+    });
+    
+    // Copy to clipboard functionality
+    copyIcon.addEventListener('click', () => {
+        navigator.clipboard.writeText(message).then(() => {
+            copyIcon.classList.replace('fa-copy', 'fa-check');
+            setTimeout(() => {
+                copyIcon.classList.replace('fa-check', 'fa-copy');
+            }, 2000);
+        });
+    });
+}
+
+// Type message with animation
+function typeMessage(element, message) {
+    let index = 0;
+    element.textContent = '';
+    const interval = setInterval(() => {
+        if (index < message.length) {
+            element.textContent += message[index];
+            index++;
+            scrollToBottom();
+        } else {
+            clearInterval(interval);
+        }
+    }, 20);
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'typing-indicator';
+    typingIndicator.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+    `;
+    chatDisplayArea.appendChild(typingIndicator);
+    scrollToBottom();
+    return typingIndicator;
+}
+
+// Update status indicator
+function updateStatus(status, text) {
+    statusIndicator.className = `status-indicator ${status}`;
+    statusIndicator.querySelector('.status-text').textContent = text;
+}
+
+// Voice recognition
 function startVoiceRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
+        return;
+    }
+
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    // Show visual indicator for recording
+    // Visual feedback
     voiceButton.classList.add('recording');
-    voiceButton.innerHTML = '<i class="fas fa-stop"></i>'; // Change icon to stop icon
+    voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
+    updateStatus('typing', 'Listening...');
 
     recognition.start();
 
@@ -39,98 +224,37 @@ function startVoiceRecognition() {
     };
 
     recognition.onspeechend = () => {
-        // Hide visual indicator when recording stops
-        voiceButton.classList.remove('recording');
-        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Change icon back to microphone
         recognition.stop();
+        voiceButton.classList.remove('recording');
+        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
     };
 
     recognition.onerror = (event) => {
         console.error('Voice recognition error:', event.error);
-        alert('Voice recognition error: ' + event.error);
-        // Hide visual indicator when an error occurs
         voiceButton.classList.remove('recording');
-        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Change icon back to microphone
+        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        updateStatus('error', 'Voice input failed');
+        setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
     };
 }
 
-async function handleSubmit() {
-    const prompt = inputField.value.trim();
-    const chatDisplayArea = document.getElementById('chat-display-area');
-
-    if (prompt) {
-        const userMessageBox = document.createElement('div');
-        userMessageBox.className = 'message-box-container';
-        userMessageBox.innerHTML = `
-            <div class="message-box user">
-                <p>${prompt}</p>
-                <a href="https://www.google.com/search?q=${encodeURIComponent(prompt)}" target="_blank">
-                    <img src="google-logo.png" alt="Google Search" class="google-search-icon">
-                </a>
-            </div>`;
-        chatDisplayArea.appendChild(userMessageBox);
-
-        inputField.value = ''; // Clear input field after submitting
-
-        const loadingIndicator = document.createElement('div');
-        loadingIndicator.className = 'message-box-container';
-        loadingIndicator.innerHTML = `<div class="message-box bot"><p>Gemini is typing...</p></div>`;
-        chatDisplayArea.appendChild(loadingIndicator);
-
-        const response = await fetchGeminiResponse(prompt);
-        chatDisplayArea.removeChild(loadingIndicator);
-
-        const botMessageBox = document.createElement('div');
-        botMessageBox.className = 'message-box-container';
-        botMessageBox.innerHTML = `
-            <div class="message-box bot"><p></p></div>
-            <i class="fas fa-volume-up read-aloud-icon"></i>`;
-        chatDisplayArea.appendChild(botMessageBox);
-
-        // Add event listener for read-aloud icon
-        botMessageBox.querySelector('.read-aloud-icon').addEventListener('click', () => {
-            const utterance = new SpeechSynthesisUtterance(response);
-            speechSynthesis.speak(utterance);
-        });
-
-        // Slow response appearance
-        let index = 0;
-        const interval = setInterval(() => {
-            if (index < response.length) {
-                botMessageBox.querySelector('.message-box p').innerHTML += response[index];
-                index++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 50); // Adjust speed as needed
-
-        storeInHistory(prompt, response);
-        storeInServer(prompt, response);
-        
-        // Scroll to bottom when new message is added
-        window.scrollToBottom();
-    } else {
-        alert('Enter a prompt!');
-    }
-}
-
 // Fetch Gemini Response
-const fetchGeminiResponse = async (prompt) => {
+async function fetchGeminiResponse(prompt) {
     try {
         const response = await fetch(`/api/gemini?prompt=${encodeURIComponent(prompt)}`);
         if (!response.ok) {
             throw new Error('Failed to fetch Gemini response');
         }
         const data = await response.json();
-        return data.response || 'No response available.';
+        return data.response || 'I couldn\'t generate a response. Please try again.';
     } catch (error) {
         console.error('Error:', error.message);
-        return 'Sorry, Daksha is not connected. Please try again later.';
+        throw error;
     }
-};
+}
 
-// Fetch Suggested Prompts from Gemini
-const fetchSuggestedPrompts = async () => {
+// Fetch Suggested Prompts
+async function fetchSuggestedPrompts() {
     try {
         const response = await fetch('/api/suggested-prompts');
         if (!response.ok) {
@@ -151,143 +275,60 @@ const fetchSuggestedPrompts = async () => {
         });
     } catch (error) {
         console.error('Error:', error.message);
-    }
-};
-
-// Initialize Suggested Prompts
-fetchSuggestedPrompts();
-
-// Store the prompt and response in the localStorage history
-const storeInHistory = (prompt, response) => {
-    let history = JSON.parse(localStorage.getItem('history')) || [];
-    history.push({ prompt: prompt, response: response });
-
-    localStorage.setItem('history', JSON.stringify(history));
-};
-
-// Store the prompt and response on the server
-const storeInServer = async (prompt, response) => {
-    try {
-        const interaction = { prompt, response };
-        await fetch('/api/store-interaction', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(interaction)
-        });
-    } catch (error) {
-        console.error('Error storing interaction:', error.message);
-    }
-};
-
-// Function to load history and display it on the History page
-const loadHistory = () => {
-    const historyContainer = document.getElementById('history-container');
-    const history = JSON.parse(localStorage.getItem('history')) || [];
-
-    historyContainer.innerHTML = '';
-
-    if (history.length === 0) {
-        historyContainer.innerHTML = '<p>No prompts and responses found.</p>';
-    } else {
-        history.forEach((entry, index) => {
-            const logEntry = document.createElement('div');
-            logEntry.classList.add('log-entry');
-            logEntry.innerHTML = `
-                <h3>Log ${index + 1}</h3>
-                <p><strong>Prompt:</strong> ${entry.prompt}</p>
-                <p><strong>Response:</strong> ${entry.response}</p>
-            `;
-            historyContainer.appendChild(logEntry);
+        // Fallback prompts
+        const fallbackPrompts = [
+            "What's the weather like today?",
+            "Tell me a fun fact",
+            "Explain quantum computing simply",
+            "Suggest a good book to read"
+        ];
+        
+        const suggestedPromptsContainer = document.querySelector('.suggested-prompts');
+        fallbackPrompts.forEach(prompt => {
+            const promptElement = document.createElement('div');
+            promptElement.className = 'prompt';
+            promptElement.textContent = prompt;
+            promptElement.addEventListener('click', () => {
+                inputField.value = prompt;
+                handleSubmit();
+            });
+            suggestedPromptsContainer.appendChild(promptElement);
         });
     }
-};
-
-// Function to clear the history
-const clearHistory = () => {
-    localStorage.removeItem('history');
-    loadHistory(); 
-};
-
-if (window.location.pathname.includes('history.html')) {
-    loadHistory();
 }
 
-// Function to capture screenshot
-const captureScreenshot = async () => {
-    const element = document.body;
-    html2canvas(element).then((canvas) => {
-        // Convert the canvas to an image and download it
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'screenshot.png';
-        link.click();
-    });
-};
+// Store in history
+function storeInHistory(prompt, response) {
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+    history.push({ prompt, response, timestamp: new Date().toISOString() });
+    localStorage.setItem('history', JSON.stringify(history));
+}
 
-// Add keyboard shortcut for screenshot
-document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === 's') {
-        event.preventDefault();
-        captureScreenshot();
+// Scroll to bottom of chat
+function scrollToBottom() {
+    chatDisplayArea.scrollTop = chatDisplayArea.scrollHeight;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    fetchSuggestedPrompts();
+    
+    // Focus input field on load
+    inputField.focus();
+    
+    // Add status text element if not present
+    if (!document.querySelector('.status-text')) {
+        const statusText = document.createElement('span');
+        statusText.className = 'status-text';
+        statusText.textContent = 'Daksha AI is ready';
+        statusIndicator.appendChild(statusText);
     }
 });
 
-// Handle mobile keyboard appearance
-document.addEventListener('DOMContentLoaded', function() {
-  const inputField = document.getElementById('gemini-input');
-  const chatDisplay = document.getElementById('chat-display-area');
-  const inputBar = document.querySelector('.input-bar');
-  
-  // Check if it's a mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (isMobile) {
-    // When input is focused (keyboard appears)
-    inputField.addEventListener('focus', function() {
-      chatDisplay.classList.add('keyboard-active');
-      inputBar.classList.add('keyboard-active');
-      
-      // Scroll to bottom when keyboard appears
-      setTimeout(() => {
-        chatDisplay.scrollTop = chatDisplay.scrollHeight;
-      }, 100);
-    });
-    
-    // When input loses focus (keyboard disappears)
-    inputField.addEventListener('blur', function() {
-      chatDisplay.classList.remove('keyboard-active');
-      inputBar.classList.remove('keyboard-active');
-    });
-    
-    // iOS specific handling
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      // Scroll window to input on focus (iOS specific fix)
-      inputField.addEventListener('focus', function() {
-        setTimeout(function() {
-          window.scrollTo(0, document.body.scrollHeight);
-        }, 300);
-      });
+// Keyboard shortcut for focusing input
+document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== inputField) {
+        e.preventDefault();
+        inputField.focus();
     }
-    
-    // Visual feedback when sending messages
-    document.getElementById('gemini-submit').addEventListener('click', function() {
-      if (inputField.value.trim() !== '') {
-        // Add a subtle animation
-        this.classList.add('sending');
-        setTimeout(() => {
-          this.classList.remove('sending');
-        }, 300);
-      }
-    });
-  }
-  
-  // Always scroll to bottom when new messages arrive
-  // This function should be called whenever a new message is added
-  function scrollToBottom() {
-    chatDisplay.scrollTop = chatDisplay.scrollHeight;
-  }
-  
-  // Expose this function globally so it can be called from your chat logic
-  window.scrollToBottom = scrollToBottom;
 });

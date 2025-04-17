@@ -38,5 +38,15 @@
     "prompt": "whats the meaning of chabot",
     "response": "The word \"Chabot\" can have a few different meanings, depending on the context:\n\n*   **A surname:** Chabot is a relatively common French surname.\n\n*   **Anthony Chabot:** This refers to Anthony Chabot (1813–1888), a pioneering American engineer and entrepreneur best known for his contributions to water distribution and firefighting in California, particularly in Oakland. He's the namesake of:\n\n    *   **Chabot Space & Science Center:** Located in Oakland, California, it's a planetarium, science museum, and observatory.\n\n    *   **Lake Chabot:** A reservoir in Castro Valley, California, also named after Anthony Chabot.\n\nTherefore, the meaning of \"Chabot\" depends on the context. If you're talking about a person's name, it's likely a surname. If you're in the San Francisco Bay Area, it might refer to the Space & Science Center or the lake, both connected to Anthony Chabot.",
     "language": "en-US"
+  },
+  {
+    "prompt": "hey",
+    "response": "Hey there! How can I help you today?\n",
+    "language": "en-US"
+  },
+  {
+    "prompt": "Hello, hello, hello.",
+    "response": "Hello there! How can I help you today?\n",
+    "language": "en-US"
   }
 ]

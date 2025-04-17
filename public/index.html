@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot</title>
+    <title>Daksha AI Chatbot</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Icon Library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link rel unbeatable="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@300;600&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@300;500;600&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <!-- Include html2canvas from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -18,39 +18,67 @@
     <!-- Header Section -->
     <header class="navbar">
         <div class="logo-container">
-            <img src="Designer.png" alt="Logo" class="logo">
+            <img src="Designer.png" alt="Daksha AI Logo" class="logo">
             <div class="header-title">Daksha AI</div>
         </div>
         <!-- Navigation Section -->
         <nav class="nav-buttons" id="navbar">
-            <button class="hamburger-menu" id="hamburger-menu"><i class="fas fa-bars"></i></button>
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <!-- Hamburger Menu Dropdown -->
             <div class="dropdown-menu" id="dropdown-menu">
-                <a href="history.html">History</a>
-                <a href="About Us.html">About Us</a>
-                <a href="image.html">Image Gen</a>
+                <a href="history.html"><i class="fas fa-history"></i> History</a>
+                <a href="About Us.html"><i class="fas fa-info-circle"></i> About Us</a>
+                <a href="image.html"><i class="fas fa-image"></i> Image Gen</a>
             </div>
         </nav>
     </header>
 
     <!-- Suggested Prompts Section -->
-    <div class="suggested-prompts">
-        <!-- Dynamic prompts will be inserted here -->
+    <div class="suggested-prompts-container">
+        <h3 class="suggested-prompts-title">Try asking:</h3>
+        <div class="suggested-prompts">
+            <!-- Dynamic prompts will be inserted here -->
+        </div>
     </div>
 
     <!-- Main Content -->
     <main>
         <!-- Chat Display Area -->
-        <h2 class="section-heading">Chats</h2>
-        <div id="chat-display-area"></div>
+        <div class="chat-header">
+            <h2 class="section-heading">Chat with Daksha</h2>
+            <button id="clear-chat" class="clear-chat-button" title="Clear conversation">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+        <div id="chat-display-area">
+            <div class="welcome-message">
+                <img src="Designer.png" alt="Daksha AI" class="welcome-logo">
+                <h3>Welcome to Daksha AI</h3>
+                <p>Ask me anything! I can help with information, creative ideas, and more.</p>
+            </div>
+        </div>
 
         <!-- Input Bar -->
         <div class="input-bar">
-            <input type="text" id="gemini-input" placeholder="Ask Daksha.....">
-            <button id="gemini-submit" class="primary-button"><i class="fas fa-paper-plane"></i></button>
-            <button id="voice-input" class="secondary-button"><i class="fas fa-microphone"></i></button>
+            <div class="input-container">
+                <input type="text" id="gemini-input" placeholder="Ask Daksha AI..." aria-label="Type your message">
+                <button id="voice-input" class="secondary-button" aria-label="Voice input">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            <button id="gemini-submit" class="primary-button" aria-label="Send message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </main>
+
+    <!-- Status Indicator -->
+    <div id="status-indicator" class="status-indicator">
+        <div class="status-dot"></div>
+        <span class="status-text">Daksha AI is ready</span>
+    </div>
 
     <!-- JavaScript -->
     <script src="script.js"></script>

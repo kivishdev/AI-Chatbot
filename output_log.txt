@@ -23,3 +23,11 @@ Response: The word "Chabot" can have a few different meanings, depending on the 
 
 Therefore, the meaning of "Chabot" depends on the context. If you're talking about a person's name, it's likely a surname. If you're in the San Francisco Bay Area, it might refer to the Space & Science Center or the lake, both connected to Anthony Chabot.
 Grounding: {}
+[2025-04-17T20:41:06.199Z] Prompt: "hey"
+Response: Hey there! How can I help you today?
+
+Grounding: {}
+[2025-04-17T20:41:30.676Z] Prompt: "Hello, hello, hello."
+Response: Hello there! How can I help you today?
+
+Grounding: {}
