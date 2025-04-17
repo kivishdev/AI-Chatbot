@@ -172,8 +172,7 @@ form.addEventListener("submit", async (e) => {
       if (data.description) {
         const formattedHTML = marked.parse(data.description);
         descriptionDiv.innerHTML = `<strong>Description:</strong><br>${formattedHTML}`;
-      }
-
+      }     
     } else {
       outputDiv.innerHTML = "<p>❌ No image generated. Try a different prompt.</p>";
     }

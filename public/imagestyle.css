@@ -275,9 +275,10 @@ button[type="submit"]:hover {
   border-radius: 8px;
   border-left: 4px solid #4a4e69;
   line-height: 1.6;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   white-space: pre-wrap;
+
 }
 
 /* Loading styles */
