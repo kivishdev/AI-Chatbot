@@ -39,51 +39,6 @@ if (chatDisplayArea.children.length === 0) {
     displayWelcomeMessage();
 }
 
-// Mobile Keyboard Handling
-document.addEventListener('DOMContentLoaded', function() {
-    const body = document.body;
-    
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-        let initialHeight = window.innerHeight;
-
-        inputField.addEventListener('focus', function() {
-            body.classList.add('keyboard-active');
-            setTimeout(() => {
-                chatDisplayArea.scrollTop = chatDisplayArea.scrollHeight;
-            }, 300);
-        });
-
-        inputField.addEventListener('blur', function() {
-            body.classList.remove('keyboard-active');
-        });
-
-        window.addEventListener('resize', () => {
-            const newHeight = window.innerHeight;
-            body.classList.toggle('keyboard-active', newHeight < initialHeight);
-        });
-    }
-
-    // Initialize other components
-    fetchSuggestedPrompts();
-    inputField.focus();
-    
-    // Add status text if missing
-    if (!document.querySelector('.status-text')) {
-        const statusText = document.createElement('span');
-        statusText.className = 'status-text';
-        statusText.textContent = 'Daksha AI is ready';
-        statusIndicator.appendChild(statusText);
-    }
-});
-
-// Enhanced scroll function
-function scrollToBottom() {
-    chatDisplayArea.scrollTo({
-        top: chatDisplayArea.scrollHeight,
-        behavior: 'smooth'
-    });
-}
-
 // Handle form submission
 async function handleSubmit() {
     const prompt = inputField.value.trim();
@@ -370,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Keyboard shortcut handler (keep at bottom)
+// Keyboard shortcut for focusing input
 document.addEventListener('keydown', (e) => {
     if (e.key === '/' && document.activeElement !== inputField) {
         e.preventDefault();

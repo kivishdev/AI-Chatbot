@@ -48,5 +48,30 @@
     "prompt": "Hello, hello, hello.",
     "response": "Hello there! How can I help you today?\n",
     "language": "en-US"
+  },
+  {
+    "prompt": "hey",
+    "response": "Hey there! How can I help you today?\n",
+    "language": "en-US"
+  },
+  {
+    "prompt": "write a code for hello world in python",
+    "response": "```python\nprint(\"Hello, World!\")\n```\n\nThis single line of code will print the text \"Hello, World!\" to your console.\n",
+    "language": "en-US"
+  },
+  {
+    "prompt": "writte a paragraph full of mistakes",
+    "response": "Their was this one time I went to the beach with my cuzin. We packed are lunch, witch included sandwhiches and apple's. When we got their, the wether was reel nice. We ran striat into the water and startted splashing eatch other. It was so much funner than I thot it would be!\n",
+    "language": "en-US"
+  },
+  {
+    "prompt": "use bold characters",
+    "response": "Okay, I understand. From now on, I will use **bold** characters.\n",
+    "language": "en-US"
+  },
+  {
+    "prompt": "ok",
+    "response": "Okay, great! How can I help you today? Do you have a question, a task, or just want to chat? Let me know!\n",
+    "language": "en-US"
   }
 ]
