@@ -552,10 +552,18 @@ main {
   30% { transform: translateY(-5px); }
 }
 
+
 /* Media Queries for Mobile Devices */
 @media only screen and (max-width: 768px) {
   header.navbar {
       padding: 10px 15px;
+  }
+
+  body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 
   .logo {
@@ -580,7 +588,10 @@ main {
   }
 
   #chat-display-area {
-      height: calc(100vh - 280px);
+    height: calc(100vh - 160px);
+    padding-bottom: 80px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .message-box {
@@ -590,9 +601,46 @@ main {
   }
 
   .input-bar {
-      padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-radius: 0;
+    padding: 10px;
+    margin: 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    z-index: 1000;
   }
 
+  /* iOS Safe Area Handling */
+  @supports (padding: max(0px)) {
+    .input-bar {
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+    
+    #chat-display-area {
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Keyboard Active State */
+  .keyboard-active #chat-display-area {
+    height: calc(100vh - 120px);
+  }
+
+  .keyboard-active .navbar {
+    position: static;
+  }
+
+  /* Prevent Content Jumping */
+  .suggested-prompts-container,
+  .chat-header {
+    flex-shrink: 0;
+  }
+
+  /* These were misplaced outside */
   .primary-button, .secondary-button {
       width: 44px;
       height: 44px;
@@ -602,9 +650,9 @@ main {
       bottom: 70px;
       left: 15px;
   }
-}
+} /* ← Proper media query closure */
 
-/* Animation for new messages */
+/* Animation for new messages (GLOBAL - outside media query) */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
