@@ -102,7 +102,6 @@ async function handleSubmit() {
         scrollToBottom();
     }
 }
-
 // Display welcome message
 function displayWelcomeMessage() {
     chatDisplayArea.innerHTML = `
@@ -207,6 +206,7 @@ function updateStatus(status, text) {
     statusIndicator.querySelector('.status-text').textContent = text;
 }
 
+// Voice recognition
 function startVoiceRecognition() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
@@ -218,6 +218,7 @@ function startVoiceRecognition() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
+    // Visual feedback
     voiceButton.classList.add('recording');
     voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
     updateStatus('typing', 'Listening...');
@@ -231,24 +232,19 @@ function startVoiceRecognition() {
     };
 
     recognition.onspeechend = () => {
-        setTimeout(() => recognition.stop(), 100); // Prevent early stop
-    };
-
-    recognition.onend = () => {
+        recognition.stop();
         voiceButton.classList.remove('recording');
         voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
-        updateStatus('ready', 'Daksha AI is ready');
     };
 
     recognition.onerror = (event) => {
-        console.error('Voice recognition error:', event);
-        updateStatus('error', `Voice input failed: ${event.error}`);
+        console.error('Voice recognition error:', event.error);
         voiceButton.classList.remove('recording');
         voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        updateStatus('error', 'Voice input failed');
         setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
     };
 }
-
 
 // Fetch Gemini Response
 async function fetchGeminiResponse(prompt) {
