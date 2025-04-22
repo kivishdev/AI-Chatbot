@@ -15,12 +15,13 @@ body {
   line-height: 1.5;
 }
 
-/* Minimal Header */
+/* Header Section */
 .hero {
   background: var(--deep-blue);
   padding: 4rem 2rem 6rem;
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .hero::after {
@@ -34,19 +35,33 @@ body {
   transform: skewY(-3deg);
 }
 
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--ai-purple);
+}
+
 .hero-title {
   font-size: 2.5rem;
   font-weight: 800;
   color: white;
-  text-align: center;
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .hero-subtitle {
-  color: rgba(255,255,255,0.9);
-  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1.1rem;
   font-weight: 500;
+  margin: 0;
 }
 
 /* AI Feature Grid */
@@ -63,19 +78,19 @@ body {
   background: white;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(15,23,42,0.05);
-  border: 1px solid rgba(15,23,42,0.05);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .ai-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(15,23,42,0.1);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
 }
 
 .gemini-badge {
   display: inline-block;
-  background: rgba(99,102,241,0.1);
+  background: rgba(99, 102, 241, 0.1);
   color: var(--ai-purple);
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -99,6 +114,7 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   margin: 2rem 0;
+  white-space: pre-wrap;
 }
 
 /* Sophisticated Button */
@@ -113,11 +129,128 @@ body {
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(99,102,241,0.2);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
 }
 
 .chat-cta:hover {
   background: #4F46E5;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Footer Section */
+.footer {
+  background: var(--deep-blue);
+  color: white;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  margin-top: 1rem;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--ai-purple);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem 4rem;
+  }
+
+  .hero-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .ai-grid {
+    grid-template-columns: 1fr;
+    margin: -3rem auto 2rem;
+    padding: 0 1rem;
+  }
+
+  .ai-card {
+    padding: 1.5rem;
+  }
+
+  .architecture {
+    margin: 3rem auto;
+    padding: 0 1rem;
+  }
+
+  .chat-cta {
+    padding: 0.75rem 1.5rem;
+  }
+
+  .footer {
+    padding: 1.5rem 0;
+  }
+
+  .footer-links a {
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .hero-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .ai-card {
+    padding: 1.25rem;
+  }
+
+  .code-block {
+    font-size: 0.8rem;
+  }
+
+  .chat-cta {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .footer p {
+    font-size: 0.8rem;
+  }
+
+  .footer-links a {
+    margin: 0 0.4rem;
+    font-size: 0.9rem;
+  }
 }
