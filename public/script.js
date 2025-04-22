@@ -15,12 +15,12 @@ document.head.appendChild(script);
 
 // Load Prism.js for code highlighting
 const prismScript = document.createElement('script');
-prismScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
+prismScript.src = 'prism.min.js'; // Updated to local file in same directory
 document.head.appendChild(prismScript);
 
 const prismCSS = document.createElement('link');
 prismCSS.rel = 'stylesheet';
-prismCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+prismCSS.href = 'prism.min.css'; // Updated to local file in same directory
 document.head.appendChild(prismCSS);
 
 // Toggle the hamburger menu dropdown
@@ -69,21 +69,18 @@ async function handleSubmit() {
         try {
             // Update status
             updateStatus('typing', 'Daksha AI is typing...');
+            console.log('Fetching response for prompt:', prompt);
             
             // Get response from Gemini
             const response = await fetchGeminiResponse(prompt);
+            console.log('Response received:', response);
             
             // Remove typing indicator
             chatDisplayArea.removeChild(typingIndicator);
             
             // Add bot response to chat
             addBotMessage(response);
-            
-            // Store in history
             storeInHistory(prompt, response);
-            
-            // Update status
-            updateStatus('ready', 'Daksha AI is ready');
         } catch (error) {
             // Remove typing indicator
             chatDisplayArea.removeChild(typingIndicator);
@@ -91,17 +88,20 @@ async function handleSubmit() {
             // Show error message
             addBotMessage('Sorry, I encountered an error. Please try again later.');
             
-            // Update status
+            // Update status to error
             updateStatus('error', 'Connection error');
-            setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
-            
-            console.error('Error:', error.message);
+            console.error('Error during fetch:', error.message);
+        } finally {
+            // Reset status to ready regardless of success or failure
+            updateStatus('ready', 'Daksha AI is ready');
+            console.log('Status reset to ready');
         }
         
         // Scroll to bottom
         scrollToBottom();
     }
 }
+
 // Display welcome message
 function displayWelcomeMessage() {
     chatDisplayArea.innerHTML = `
@@ -158,29 +158,38 @@ function addBotMessage(message) {
     const messageContent = messageBox.querySelector('.message-content');
     
     // Parse markdown and render
-    const parsedMessage = marked.parse(message, {
+    const parsedMessage = marked.parse(message || '', {
         breaks: true, // Convert newlines to <br>
         gfm: true // Enable GitHub Flavored Markdown
     });
-    messageContent.innerHTML = parsedMessage;
+    messageContent.innerHTML = parsedMessage || message; // Fallback to plain text if parsing fails
     
     // Highlight code blocks with Prism.js
     Prism.highlightAllUnder(messageContent);
     
     // Read aloud functionality
     readAloudIcon.addEventListener('click', () => {
-        const utterance = new SpeechSynthesisUtterance(message);
+        const utterance = new SpeechSynthesisUtterance(messageContent.textContent || message);
         speechSynthesis.speak(utterance);
     });
     
-    // Copy to clipboard functionality (copy raw message)
+    // Copy to clipboard functionality (copy rendered content)
     copyIcon.addEventListener('click', () => {
-        navigator.clipboard.writeText(message).then(() => {
-            copyIcon.classList.replace('fa-copy', 'fa-check');
-            setTimeout(() => {
-                copyIcon.classList.replace('fa-check', 'fa-copy');
-            }, 2000);
-        });
+        const textToCopy = messageContent.textContent.trim();
+        if (textToCopy) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copyIcon.classList.replace('fa-copy', 'fa-check');
+                setTimeout(() => {
+                    copyIcon.classList.replace('fa-check', 'fa-copy');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text:', err);
+                addBotMessage('Failed to copy text to clipboard due to an internal error.');
+            });
+        } else {
+            console.warn('No content to copy');
+            addBotMessage('No content available to copy.');
+        }
     });
     
     scrollToBottom();
@@ -207,43 +216,54 @@ function updateStatus(status, text) {
 }
 
 // Voice recognition
-function startVoiceRecognition() {
+async function startVoiceRecognition() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
         return;
     }
 
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    try {
+        // Request microphone permission
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission is granted
 
-    // Visual feedback
-    voiceButton.classList.add('recording');
-    voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
-    updateStatus('typing', 'Listening...');
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-    recognition.start();
+        // Visual feedback
+        voiceButton.classList.add('recording');
+        voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
+        updateStatus('typing', 'Listening...');
 
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        inputField.value = transcript;
-        handleSubmit();
-    };
+        recognition.start();
 
-    recognition.onspeechend = () => {
-        recognition.stop();
-        voiceButton.classList.remove('recording');
-        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
-    };
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            inputField.value = transcript;
+            handleSubmit();
+        };
 
-    recognition.onerror = (event) => {
-        console.error('Voice recognition error:', event.error);
-        voiceButton.classList.remove('recording');
-        voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
-        updateStatus('error', 'Voice input failed');
+        recognition.onspeechend = () => {
+            recognition.stop();
+            voiceButton.classList.remove('recording');
+            voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Voice recognition error:', event.error);
+            voiceButton.classList.remove('recording');
+            voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+            updateStatus('error', 'Voice input failed');
+            setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
+        };
+    } catch (error) {
+        console.error('Microphone permission denied or error:', error.message);
+        addBotMessage('Microphone access denied. Please allow microphone permission to use voice input.');
+        updateStatus('error', 'Permission denied');
         setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
-    };
+    }
 }
 
 // Fetch Gemini Response
