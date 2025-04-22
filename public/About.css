@@ -1,237 +1,123 @@
-/* General Body Styling */
+/* About.css */
+:root {
+  --deep-blue: #0F172A;
+  --ai-purple: #6366F1;
+  --tech-teal: #14B8A6;
+  --neutral-100: #F8FAFC;
+  --neutral-700: #334155;
+}
+
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
-  background: #f0f0f5;
-  color: #212121;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--neutral-100);
+  color: var(--deep-blue);
+  line-height: 1.5;
 }
 
-/* Header Styling */
-header {
-  background-color: #ffffff;
-  color: #212121;
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  margin: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Minimal Header */
+.hero {
+  background: var(--deep-blue);
+  padding: 4rem 2rem 6rem;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Main Section Styling */
-main {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 20px;
-  overflow-y: auto;
-  margin-bottom: 60px; /* Ensure content is not hidden behind footer */
-}
-
-/* About Us Content Styling */
-.about-us-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  margin: 20px auto;
-}
-
-/* Heading Styling */
-.about-us-content h2 {
-  color: #333;
-  font-size: 26px;
-  margin-bottom: 15px;
-}
-
-/* Paragraph Styling */
-.about-us-content p {
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-/* Link Styling */
-.about-us-content a {
-  color: #4e7fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.about-us-content a:hover {
-  text-decoration: underline;
-}
-
-/* Footer Styling */
-footer {
-  position: fixed;
-  bottom: 0;
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -50px;
   left: 0;
   width: 100%;
-  background: #ffffff;
-  color: #212121;
-  text-align: center;
-  padding: 10px 0;
-  font-size: 12px;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
-  border-radius: 25px 25px 0 0;
+  height: 100px;
+  background: var(--neutral-100);
+  transform: skewY(-3deg);
 }
 
-/* Back Link Section */
-.back-link {
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
   text-align: center;
-  margin-top: 20px;
+  margin: 0 0 0.5rem;
 }
 
-.back-link a {
-  color: #4e7fff;
+.hero-subtitle {
+  color: rgba(255,255,255,0.9);
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* AI Feature Grid */
+.ai-grid {
+  display: grid;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: -4rem auto 3rem;
+  padding: 0 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.ai-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(15,23,42,0.05);
+  border: 1px solid rgba(15,23,42,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ai-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(15,23,42,0.1);
+}
+
+.gemini-badge {
+  display: inline-block;
+  background: rgba(99,102,241,0.1);
+  color: var(--ai-purple);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Technical Details */
+.architecture {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.code-block {
+  background: var(--deep-blue);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  margin: 2rem 0;
+}
+
+/* Sophisticated Button */
+.chat-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--ai-purple);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.2);
 }
 
-.back-link a:hover {
-  text-decoration: underline;
+.chat-cta:hover {
+  background: #4F46E5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99,102,241,0.3);
 }
-
-/* Make sure the page content is scrollable */
-.content-wrapper {
-  padding-bottom: 60px; /* To avoid overlap with the fixed footer */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-/* ------------------- RESPONSIVE DESIGN ------------------- */
-
-/* Small Phones (320px–480px) */
-@media (max-width: 480px) {
-  header {
-      padding: 15px;
-      font-size: 18px;
-      margin: 10px;
-  }
-
-  main {
-      padding: 10px;
-      margin-bottom: 50px;
-  }
-
-  .about-us-content {
-      padding: 15px;
-      margin: 10px;
-      font-size: 14px;
-  }
-
-  .about-us-content h2 {
-      font-size: 20px;
-  }
-
-  .about-us-content p {
-      font-size: 14px;
-  }
-
-  footer {
-      font-size: 10px;
-      padding: 8px 0;
-  }
-
-  .back-link a {
-      font-size: 12px;
-  }
-}
-
-/* Medium Phones (481px–768px) */
-@media (min-width: 481px) and (max-width: 768px) {
-  header {
-      padding: 18px;
-      font-size: 22px;
-      margin: 15px;
-  }
-
-  main {
-      padding: 15px;
-      margin-bottom: 55px;
-  }
-
-  .about-us-content {
-      padding: 18px;
-      margin: 15px;
-      font-size: 16px;
-  }
-
-  .about-us-content h2 {
-      font-size: 24px;
-  }
-
-  .about-us-content p {
-      font-size: 15px;
-  }
-
-  footer {
-      font-size: 11px;
-      padding: 9px 0;
-  }
-
-  .back-link a {
-      font-size: 13px;
-  }
-}
-
-/* Large Phones (769px–1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  header {
-      padding: 20px;
-      font-size: 24px;
-      margin: 20px;
-  }
-
-  main {
-      padding: 20px;
-      margin-bottom: 60px;
-  }
-
-  .about-us-content {
-      padding: 20px;
-      margin: 20px;
-      font-size: 18px;
-  }
-
-  .about-us-content h2 {
-      font-size: 26px;
-  }
-
-  .about-us-content p {
-      font-size: 16px;
-  }
-
-  footer {
-      font-size: 12px;
-      padding: 10px 0;
-  }
-
-  .back-link a {
-      font-size: 14px;
-  }
-}
-
-
-/* High-Resolution Phones (Retina) */
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-       only screen and (min-resolution: 192dpi) {
-    body {
-        -webkit-font-smoothing: antialiased; /* For Chrome and Safari */
-        -moz-osx-font-smoothing: grayscale; /* For Firefox on macOS */
-    }
-}
-

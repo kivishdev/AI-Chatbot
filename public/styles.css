@@ -284,15 +284,15 @@ main {
 /* Message Box Styling */
 .message-box-container {
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: 20px; /* Increased spacing between messages */
 }
 
 .message-box {
   font-family: 'Poppins', sans-serif;
   max-width: 85%;
-  padding: 12px 16px;
+  padding: 14px 18px; /* Slightly increased padding */
   border-radius: 18px;
-  line-height: 1.5;
+  line-height: 1.6; /* Improved line height for readability */
   position: relative;
   word-wrap: break-word;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -332,9 +332,59 @@ main {
   border-color: transparent transparent transparent var(--bot-message);
 }
 
-.message-box p {
+.message-box p, .message-content {
   margin: 0;
   font-size: 0.95rem;
+}
+
+/* Markdown and Code Styling */
+.message-content pre, .message-content code {
+  font-family: 'Courier New', Courier, monospace;
+  background: var(--bg-medium);
+  border-radius: 6px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.message-content pre {
+  margin: 10px 0;
+  padding: 12px;
+  background: #f6f8fa;
+  border: 1px solid var(--bg-dark);
+}
+
+.message-content code {
+  padding: 2px 4px;
+}
+
+.message-content h1, .message-content h2, .message-content h3 {
+  margin: 12px 0 8px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.message-content p {
+  margin: 8px 0;
+}
+
+.message-content ul, .message-content ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.message-content li {
+  margin-bottom: 6px;
+}
+
+/* Prism.js overrides */
+.message-content pre[class*="language-"] {
+  background: #f6f8fa;
+  border: 1px solid var(--bg-dark);
+  padding: 12px;
+}
+
+.message-content code[class*="language-"] {
+  background: none;
+  padding: 0;
 }
 
 .message-actions {

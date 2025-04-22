@@ -8,6 +8,21 @@ const chatDisplayArea = document.getElementById('chat-display-area');
 const clearChatButton = document.getElementById('clear-chat');
 const statusIndicator = document.getElementById('status-indicator');
 
+// Load marked.min.js (assumed to be local)
+const script = document.createElement('script');
+script.src = 'marked.min.js';
+document.head.appendChild(script);
+
+// Load Prism.js for code highlighting
+const prismScript = document.createElement('script');
+prismScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
+document.head.appendChild(prismScript);
+
+const prismCSS = document.createElement('link');
+prismCSS.rel = 'stylesheet';
+prismCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+document.head.appendChild(prismCSS);
+
 // Toggle the hamburger menu dropdown
 hamburgerMenu.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -129,7 +144,7 @@ function addBotMessage(message) {
     messageBox.className = 'message-box-container';
     messageBox.innerHTML = `
         <div class="message-box bot">
-            <p></p>
+            <div class="message-content"></div>
         </div>
         <div class="message-actions">
             <i class="fas fa-volume-up read-aloud-icon" title="Read aloud"></i>
@@ -141,10 +156,17 @@ function addBotMessage(message) {
     // Add event listeners for actions
     const readAloudIcon = messageBox.querySelector('.read-aloud-icon');
     const copyIcon = messageBox.querySelector('.copy-icon');
-    const messageContent = messageBox.querySelector('.message-box p');
+    const messageContent = messageBox.querySelector('.message-content');
     
-    // Type message with animation
-    typeMessage(messageContent, message);
+    // Parse markdown and render
+    const parsedMessage = marked.parse(message, {
+        breaks: true, // Convert newlines to <br>
+        gfm: true // Enable GitHub Flavored Markdown
+    });
+    messageContent.innerHTML = parsedMessage;
+    
+    // Highlight code blocks with Prism.js
+    Prism.highlightAllUnder(messageContent);
     
     // Read aloud functionality
     readAloudIcon.addEventListener('click', () => {
@@ -152,7 +174,7 @@ function addBotMessage(message) {
         speechSynthesis.speak(utterance);
     });
     
-    // Copy to clipboard functionality
+    // Copy to clipboard functionality (copy raw message)
     copyIcon.addEventListener('click', () => {
         navigator.clipboard.writeText(message).then(() => {
             copyIcon.classList.replace('fa-copy', 'fa-check');
@@ -161,21 +183,8 @@ function addBotMessage(message) {
             }, 2000);
         });
     });
-}
-
-// Type message with animation
-function typeMessage(element, message) {
-    let index = 0;
-    element.textContent = '';
-    const interval = setInterval(() => {
-        if (index < message.length) {
-            element.textContent += message[index];
-            index++;
-            scrollToBottom();
-        } else {
-            clearInterval(interval);
-        }
-    }, 20);
+    
+    scrollToBottom();
 }
 
 // Show typing indicator
