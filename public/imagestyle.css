@@ -186,19 +186,85 @@ button[type="submit"]:hover {
   font-size: 0.8rem;
 }
 
+/* Enhanced preview container styles */
 #preview-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+  position: relative;
 }
 
-#preview-image {
-  max-width: 100%;
-  max-height: 250px;
-  object-fit: contain;
+.preview-image-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.preview-image-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.preview-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0;
+  z-index: 2;
+}
+
+.image-counter {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.upload-hint {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Add more images button */
+#add-more-images {
+  display: none;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+#add-more-images:hover {
+  background-color: #e0e0e0;
 }
 
 .hint-text {
@@ -247,6 +313,12 @@ button[type="submit"]:hover {
   width: 100%;
   height: auto;
   display: block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.image-container img:hover {
+  transform: scale(1.02);
 }
 
 .download-btn {
@@ -278,7 +350,6 @@ button[type="submit"]:hover {
   max-height: 220px;
   overflow-y: auto;
   white-space: pre-wrap;
-
 }
 
 /* Loading styles */
@@ -342,6 +413,30 @@ button[type="submit"]:hover {
   height: 180px;
   object-fit: cover;
   display: block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.previous-image-container img:hover {
+  transform: scale(1.02);
+}
+
+/* Style for download button in previous images */
+.previous-image-container .download-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  bottom: 10px;
+  left: 10px;
+  position: absolute;
+}
+
+.previous-image-container .download-btn:hover {
+  background-color: #45a049;
 }
 
 .remove-btn {
@@ -359,6 +454,45 @@ button[type="submit"]:hover {
 
 .remove-btn:hover {
   background-color: rgba(220, 53, 69, 1);
+}
+
+/* Image modal styles */
+#image-modal-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+#modal-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#close-modal {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 /* Responsive adjustments */
@@ -389,5 +523,14 @@ button[type="submit"]:hover {
   
   #previous-images {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .preview-image-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .modal-content {
+    max-width: 95%;
   }
 }
