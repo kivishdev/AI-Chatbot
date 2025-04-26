@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="imagestyle.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@600&display=swap" rel="stylesheet">
   <script src="marked.min.js" defer></script>
-  <script src="image.js" defer></script>
+<script src="image.js" defer></script>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -29,32 +29,27 @@
       <!-- Image Upload Section -->
       <div class="upload-section">
         <div class="upload-header">
-          <h3>📤 Upload Reference Images for Editing</h3>
-          <button type="button" id="clear-image-btn" class="clear-btn" style="display: none;">Clear Images</button>
+          <h3>📤 Upload Reference Image for Editing</h3>
+          <button type="button" id="clear-image-btn" class="clear-btn" style="display: none;">Clear Image</button>
         </div>
         <div class="upload-container">
           <div id="upload-preview">
             <div id="upload-prompt">
               <label for="image-upload" class="upload-label">
                 <div class="upload-icon">📷</div>
-                <span>Upload images to edit with AI</span>
-                <small>Supports JPG, PNG, WEBP (Max 5MB per image)</small>
-                <div class="upload-hint">You can upload up to 4 images</div>
+                <span>Upload an image to edit with AI</span>
+                <small>Supports JPG, PNG, WEBP (Max 5MB)</small>
               </label>
               <input type="file" id="image-upload" accept="image/jpeg, image/png, image/webp" hidden />
             </div>
             <div id="preview-container" style="display: none;">
-              <!-- Images will be displayed here -->
+              <img id="preview-image" src="" alt="Preview" />
             </div>
           </div>
         </div>
-        
-        <!-- Add More Images Button -->
-        <button type="button" id="add-more-images">+ Add More Images</button>
-        
         <div class="hint-text">
-          <p>When you upload images, your prompt will be used to edit or modify them.</p>
-          <p>Click on any image to preview it in full size.</p>
+          <p>When you upload an image, your prompt will be used to edit or modify it.</p>
+          <p>For example: "Make this landscape look like winter", "Change the background to a beach", etc.</p>
         </div>
       </div>
     </form>
@@ -83,13 +78,5 @@
       <!-- These will be added dynamically -->
     </div>
   </section>
-  
-  <!-- Image Preview Modal -->
-  <div id="image-modal-container">
-    <div class="modal-content">
-      <button id="close-modal">✕</button>
-      <img id="modal-image" src="" alt="Image Preview">
-    </div>
-  </div>
 </body>
 </html>
