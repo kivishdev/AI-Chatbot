@@ -68,5 +68,10 @@
     "prompt": "hey",
     "response": "Hey there! How can I help you today?\n",
     "language": "en-US"
+  },
+  {
+    "prompt": "Hello, hello, hello, hello, hello.",
+    "response": "Well hello there! You seem enthusiastic. How can I help you today?\n",
+    "language": "en-US"
   }
 ]

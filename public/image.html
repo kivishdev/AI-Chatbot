@@ -3,80 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Image Generator & Editor</title>
+  <title>PixelCraft AI | Image Generation Studio</title>
   <link rel="stylesheet" href="imagestyle.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="marked.min.js" defer></script>
-<script src="image.js" defer></script>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="navbar-brand">🤖 Daksha Image AI</div>
-    <ul class="navbar-links">
-      <li><a href="index.html">Home</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <h1 class="fancy-text">✨ Generate & Edit AI Images</h1>
-    <form id="prompt-form">
-      <div class="input-group">
-        <input type="text" id="prompt" placeholder="Enter your prompt..." required />
-        <button type="submit">Generate</button>
+  <!-- Header and Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-icon">✨</span>
+        <span class="logo-text">PixelCraft<span class="accent">AI</span></span>
       </div>
-      
-      <!-- Image Upload Section -->
-      <div class="upload-section">
-        <div class="upload-header">
-          <h3>📤 Upload Reference Image for Editing</h3>
-          <button type="button" id="clear-image-btn" class="clear-btn" style="display: none;">Clear Image</button>
+      <nav class="main-nav">
+        <ul class="nav-links">
+          <li><a href="#" class="active">Studio</a></li>
+          <li><a href="#">Gallery</a></li>
+        </ul>
+      </nav>
+      <div class="theme-toggle" id="theme-toggle">
+        <span class="toggle-icon">🌙</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="hero-section">
+      <h1 class="hero-title">Transform Your <span class="gradient-text">Imagination</span> Into Reality</h1>
+      <p class="hero-subtitle">Create stunning AI-generated images or edit existing ones with simple prompts</p>
+    </div>
+
+    <div class="workspace">
+      <div class="workspace-container">
+        <!-- Tabs for workspace modes -->
+        <div class="workspace-tabs">
+          <button class="tab-btn active" data-tab="create">Create New</button>
+          <button class="tab-btn" data-tab="edit">Edit Image</button>
         </div>
-        <div class="upload-container">
-          <div id="upload-preview">
-            <div id="upload-prompt">
-              <label for="image-upload" class="upload-label">
-                <div class="upload-icon">📷</div>
-                <span>Upload an image to edit with AI</span>
-                <small>Supports JPG, PNG, WEBP (Max 5MB)</small>
-              </label>
-              <input type="file" id="image-upload" accept="image/jpeg, image/png, image/webp" hidden />
+
+        <!-- Create and Edit section -->
+        <div class="creation-panel">
+          <form id="prompt-form">
+            <div class="input-container">
+              <div class="prompt-wrapper">
+                <span class="input-icon">💬</span>
+                <input 
+                  type="text" 
+                  id="prompt" 
+                  class="prompt-input" 
+                  placeholder="Describe what you want to create..." 
+                  autocomplete="off"
+                  required
+                />
+                <button type="submit" class="generate-btn">
+                  <span class="btn-text">Generate</span>
+                  <span class="btn-icon">→</span>
+                </button>
+              </div>
+              <div class="input-chips">
+                <span class="chip">Realistic</span>
+                <span class="chip">3D render</span>
+                <span class="chip">Digital art</span>
+                <span class="chip">Photographic</span>
+                <span class="chip">Fantasy</span>
+                <span class="chip">Concept art</span>
+                <span class="chip">Anime</span>
+                <span class="chip">+ More</span>
+              </div>
             </div>
-            <div id="preview-container" style="display: none;">
-              <img id="preview-image" src="" alt="Preview" />
+            
+            <!-- Image Upload Area -->
+            <div class="upload-area" id="upload-area">
+              <div class="upload-header">
+                <h3>Reference Image</h3>
+                <button type="button" id="clear-image-btn" class="clear-btn" style="display: none;">
+                  Clear Image
+                </button>
+              </div>
+              
+              <div class="upload-zone" id="upload-preview">
+                <div id="upload-prompt">
+                  <label for="image-upload" class="upload-label">
+                    <div class="upload-icon">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3 15V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div class="upload-text">
+                      <span class="upload-title">Drop image here or click to upload</span>
+                      <span class="upload-subtitle">Supports JPG, PNG, WEBP (Max 5MB)</span>
+                    </div>
+                  </label>
+                  <input type="file" id="image-upload" accept="image/jpeg, image/png, image/webp" hidden />
+                </div>
+                <div id="preview-container" style="display: none;">
+                  <img id="preview-image" src="" alt="Preview" />
+                </div>
+              </div>
             </div>
+          </form>
+
+          <!-- Mode indicator -->
+          <div class="mode-status" id="mode-indicator">
+            <div class="status-icon create-mode">🔮</div>
+            <div class="status-text">Creating new image from text</div>
           </div>
         </div>
-        <div class="hint-text">
-          <p>When you upload an image, your prompt will be used to edit or modify it.</p>
-          <p>For example: "Make this landscape look like winter", "Change the background to a beach", etc.</p>
+
+        <!-- Results section -->
+        <div class="results-section">
+          <!-- Loading state -->
+          <div id="loading-state">
+            <div class="loading-container">
+              <div class="pulse-container">
+                <div class="pulse-ring"></div>
+                <div class="pulse-icon">✨</div>
+              </div>
+              <div id="loading-text" class="loading-text">Crafting your vision...</div>
+            </div>
+          </div>
+
+          <!-- Generated image output -->
+          <div id="image-output" class="image-results"></div>
+
+          <!-- Description section -->
+          <div id="description-output" class="description-panel"></div>
         </div>
       </div>
-    </form>
-
-    <!-- Mode toggle -->
-    <div class="mode-toggle">
-      <span id="mode-indicator">Current Mode: <strong>Generate New Images</strong></span>
     </div>
 
-    <!-- Image output section -->
-    <div id="image-output"></div>
+    <!-- Gallery section -->
+    <section class="gallery-section">
+      <div class="section-header">
+        <h2 class="section-title">Your Creation History</h2>
+        <div class="section-actions">
+          <button class="action-btn" id="clear-all-btn">Clear All</button>
+          <button class="action-btn primary" id="download-all-btn">Download All</button>
+        </div>
+      </div>
+      <div id="previous-images" class="gallery-grid"></div>
+    </section>
+  </main>
 
-    <!-- Description output section -->
-    <div id="description-output" class="fancy-text"></div>
-
-    <!-- Loading Spinner and Text -->
-    <div id="loading-spinner">
-      <div class="spinner"></div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <div class="footer-logo">PixelCraftAI</div>
+        <div class="footer-copyright">© 2025 PixelCraftAI. All rights reserved.</div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
     </div>
-    <div id="loading-text" class="fancy-text">✨ Generating your AI image...</div>
-  </div>
+  </footer>
 
-  <section id="previous-images-section">
-    <h2>🖼️ Previously Generated Images</h2>
-    <div id="previous-images">
-      <!-- These will be added dynamically -->
-    </div>
-  </section>
+  <script src="image.js" defer></script>
 </body>
 </html>
