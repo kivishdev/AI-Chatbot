@@ -230,7 +230,6 @@ h6 { font-size: var(--text-base); }
 
 .logo-text {
   font-family: 'Montserrat', sans-serif;
-  user-select: none;
 }
 
 .accent {
@@ -286,7 +285,6 @@ h6 { font-size: var(--text-base); }
   margin-bottom: var(--spacing-4);
   letter-spacing: -0.02em;
   line-height: 1.1;
-  user-select: none;
 }
 
 .gradient-text {
@@ -301,7 +299,6 @@ h6 { font-size: var(--text-base); }
   color: var(--text-secondary);
   max-width: 700px;
   margin: 0 auto;
-  user-select: none;
 }
 
 /* ======= WORKSPACE ======= */
@@ -657,11 +654,26 @@ h6 { font-size: var(--text-base); }
   box-shadow: var(--shadow-lg);
 }
 
-.image-item img {
-  width: 100%;
-  height: auto;
-  display: block;
+@media (min-width: 768px) {
+  .image-item img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
 }
+
+@media (max-width: 767px) {
+  .image-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
 
 .image-actions {
   position: absolute;
@@ -706,6 +718,9 @@ h6 { font-size: var(--text-base); }
   background-color: var(--bg-tertiary);
   border-radius: var(--radius-lg);
   border-left: 4px solid var(--primary);
+  
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .description-panel h4 {
