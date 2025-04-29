@@ -230,6 +230,7 @@ h6 { font-size: var(--text-base); }
 
 .logo-text {
   font-family: 'Montserrat', sans-serif;
+  user-select: none;
 }
 
 .accent {
@@ -285,6 +286,7 @@ h6 { font-size: var(--text-base); }
   margin-bottom: var(--spacing-4);
   letter-spacing: -0.02em;
   line-height: 1.1;
+  user-select: none;
 }
 
 .gradient-text {
@@ -299,6 +301,7 @@ h6 { font-size: var(--text-base); }
   color: var(--text-secondary);
   max-width: 700px;
   margin: 0 auto;
+  user-select: none;
 }
 
 /* ======= WORKSPACE ======= */
