@@ -7,6 +7,26 @@ const voiceButton = document.getElementById('voice-input');
 const chatDisplayArea = document.getElementById('chat-display-area');
 const clearChatButton = document.getElementById('clear-chat');
 const statusIndicator = document.getElementById('status-indicator');
+const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+const sidebar = document.querySelector('.sidebar');
+const newChatBtn = document.getElementById('new-chat');
+const attachFileBtn = document.getElementById('attach-file');
+
+// Auto-resize textarea
+const autoResizeTextarea = () => {
+    inputField.style.height = 'auto';
+    inputField.style.height = (inputField.scrollHeight) + 'px';
+    
+    // Limit max height
+    if (inputField.scrollHeight > 150) {
+        inputField.style.overflowY = 'auto';
+    } else {
+        inputField.style.overflowY = 'hidden';
+    }
+};
+
+// Initialize auto-resize
+inputField.addEventListener('input', autoResizeTextarea);
 
 // Load marked.min.js (assumed to be local)
 const script = document.createElement('script');
@@ -34,10 +54,27 @@ document.addEventListener('click', () => {
     dropdownMenu.style.display = 'none';
 });
 
+// Toggle sidebar on mobile
+toggleSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+});
+
+// New chat functionality
+newChatBtn.addEventListener('click', () => {
+    clearChat();
+    inputField.focus();
+});
+
+// Attach file button (placeholder functionality)
+attachFileBtn.addEventListener('click', () => {
+    // This is a placeholder for file attachment functionality
+    addBotMessage("File attachment functionality will be implemented soon!");
+});
+
 // Event Listeners for submission
 submitButton.addEventListener('click', handleSubmit);
 inputField.addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         handleSubmit();
     }
@@ -62,6 +99,7 @@ async function handleSubmit() {
         // Add user message to chat
         addUserMessage(prompt);
         inputField.value = '';
+        inputField.style.height = 'auto'; // Reset height
         
         // Show typing indicator
         const typingIndicator = showTypingIndicator();
@@ -80,7 +118,7 @@ async function handleSubmit() {
             
             // Add bot response to chat
             addBotMessage(response);
-            storeInHistory(prompt, response);
+            
         } catch (error) {
             // Remove typing indicator
             chatDisplayArea.removeChild(typingIndicator);
@@ -93,8 +131,10 @@ async function handleSubmit() {
             console.error('Error during fetch:', error.message);
         } finally {
             // Reset status to ready regardless of success or failure
-            updateStatus('ready', 'Daksha AI is ready');
-            console.log('Status reset to ready');
+            setTimeout(() => {
+                updateStatus('ready', 'Daksha AI is ready');
+                console.log('Status reset to ready');
+            }, 1000);
         }
         
         // Scroll to bottom
@@ -290,6 +330,7 @@ async function fetchSuggestedPrompts() {
         }
         const data = await response.json();
         const suggestedPromptsContainer = document.querySelector('.suggested-prompts');
+        suggestedPromptsContainer.innerHTML = ''; // Clear existing prompts
 
         data.prompts.forEach(prompt => {
             const promptElement = document.createElement('div');
@@ -308,10 +349,14 @@ async function fetchSuggestedPrompts() {
             "What's the weather like today?",
             "Tell me a fun fact",
             "Explain quantum computing simply",
-            "Suggest a good book to read"
+            "Suggest a good book to read",
+            "How does AI work?",
+            "Write a short story"
         ];
         
         const suggestedPromptsContainer = document.querySelector('.suggested-prompts');
+        suggestedPromptsContainer.innerHTML = ''; // Clear existing prompts
+        
         fallbackPrompts.forEach(prompt => {
             const promptElement = document.createElement('div');
             promptElement.className = 'prompt';
@@ -328,9 +373,17 @@ async function fetchSuggestedPrompts() {
 // Store in history
 function storeInHistory(prompt, response) {
     let history = JSON.parse(localStorage.getItem('history')) || [];
-    history.push({ prompt, response, timestamp: new Date().toISOString() });
+    const timestamp = new Date().toISOString();
+    
+    history.push({ prompt, response, timestamp });
     localStorage.setItem('history', JSON.stringify(history));
+    
+    // Update sidebar recent chats (optional)
+    updateRecentChats(prompt, timestamp);
 }
+
+// Update recent chats in sidebar
+
 
 // Scroll to bottom of chat
 function scrollToBottom() {
@@ -351,7 +404,13 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = 'Daksha AI is ready';
         statusIndicator.appendChild(statusText);
     }
+    
+    // Load recent chats from localStorage
+    
 });
+
+// Load recent chats from history in localStorage
+
 
 // Keyboard shortcut for focusing input
 document.addEventListener('keydown', (e) => {
