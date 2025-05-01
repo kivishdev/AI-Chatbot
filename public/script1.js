@@ -12,11 +12,12 @@ const sidebar = document.querySelector('.sidebar');
 const newChatBtn = document.getElementById('new-chat');
 const attachFileBtn = document.getElementById('attach-file');
 
+let conversationHistory = []; // ✅ In-session memory array
+
 // Auto-resize textarea
 const autoResizeTextarea = () => {
     inputField.style.height = 'auto';
     inputField.style.height = (inputField.scrollHeight) + 'px';
-    
     if (inputField.scrollHeight > 150) {
         inputField.style.overflowY = 'auto';
     } else {
@@ -55,6 +56,7 @@ toggleSidebarBtn.addEventListener('click', () => {
 
 // New chat
 newChatBtn.addEventListener('click', () => {
+    conversationHistory = []; // ✅ Reset memory
     clearChat();
     inputField.focus();
 });
@@ -100,7 +102,7 @@ async function handleSubmit() {
             const response = await fetchGeminiResponse(prompt);
             chatDisplayArea.removeChild(typingIndicator);
             addBotMessage(response);
-            storeInHistory(prompt, response); // ✅ Re-added for history.html
+            storeInHistory(prompt, response);
         } catch (error) {
             chatDisplayArea.removeChild(typingIndicator);
             addBotMessage('Sorry, I encountered an error. Please try again later.');
@@ -127,6 +129,7 @@ function displayWelcomeMessage() {
 }
 
 function clearChat() {
+    conversationHistory = []; // ✅ Reset memory
     chatDisplayArea.innerHTML = '';
     displayWelcomeMessage();
 }
@@ -264,12 +267,23 @@ async function startVoiceRecognition() {
     }
 }
 
+// ✅ Updated to use conversationHistory[] and POST
 async function fetchGeminiResponse(prompt) {
+    conversationHistory.push({ role: 'user', content: prompt });
+
     try {
-        const response = await fetch(`/api/gemini?prompt=${encodeURIComponent(prompt)}`);
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: conversationHistory })
+        });
+
         if (!response.ok) throw new Error('Failed to fetch Gemini response');
         const data = await response.json();
-        return data.response || 'I couldn\'t generate a response. Please try again.';
+        const result = data.response || 'I couldn\'t generate a response. Please try again.';
+
+        conversationHistory.push({ role: 'model', content: result });
+        return result;
     } catch (error) {
         console.error('Error:', error.message);
         throw error;

@@ -1,5 +1,3 @@
-// ✅ Merged server.js for Chatbot + Image Generation
-
 import dotenv from "dotenv";
 import express from "express";
 import fs from "node:fs";
@@ -8,9 +6,8 @@ import path from "node:path";
 import cors from "cors";
 import helmet from "helmet";
 import { fileURLToPath } from "node:url";
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleGenAI } from "@google/genai";
-
 
 dotenv.config();
 const app = express();
@@ -21,36 +18,43 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors());
-app.use(helmet()); // ✅ Helmet added here
-app.use(express.json({ limit: "10mb" })); // for image upload
+app.use(helmet());
+app.use(express.json({ limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Serve default HTML (optional: set to chatbot or image UI as needed)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "image.html")); // Or image.html
+  res.sendFile(path.join(__dirname, "public", "image.html"));
 });
 
-// Check API key
+// API Key check
 if (!process.env.GEMINI_API_KEY) {
   console.error("Missing GEMINI_API_KEY in .env");
   process.exit(1);
 }
 
-// AI Instances
+// AI Clients
 const textAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const imageAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ===================================
-// 📍 TEXT CHATBOT ENDPOINTS
+// 🧠 TEXT CHATBOT ENDPOINT (FIXED format)
 // ===================================
-app.get("/api/gemini", async (req, res) => {
-  const { prompt, language } = req.query;
-  if (!prompt) return res.status(400).json({ error: "Prompt is required" });
+app.post("/api/gemini", async (req, res) => {
+  const { history } = req.body;
+  if (!Array.isArray(history) || history.length === 0) {
+    return res.status(400).json({ error: "Invalid or empty history array." });
+  }
+
+  // ✅ Fix: convert {role, content} → {role, parts: [{text}]}
+  const messages = history.map(msg => ({
+    role: msg.role,
+    parts: [{ text: msg.content }]
+  }));
 
   try {
     const response = await textAI.models.generateContent({
       model: "gemini-2.0-flash",
-      contents: prompt,
+      contents: messages,
       tools: [{ googleSearch: { force: true } }],
     });
 
@@ -60,23 +64,10 @@ app.get("/api/gemini", async (req, res) => {
     const timestamp = new Date().toISOString();
     console.log("====== Gemini Chat Response ======");
     console.log(`🕒 Timestamp: ${timestamp}`);
-    console.log(`🧠 Prompt: ${prompt}`);
+    console.log(`🧠 History: ${JSON.stringify(messages, null, 2)}`);
     console.log(`💬 Response: ${outputText}`);
-    console.log(`🌐 Language: ${language || 'en-US'}`);
     console.log(`🔎 Grounding Metadata:`, JSON.stringify(groundingMetadata, null, 2));
     console.log("===================================");
-
-    const formattedOutput = `[${timestamp}] Prompt: "${prompt}"\nResponse: ${outputText}\nGrounding: ${JSON.stringify(groundingMetadata)}\n`;
-    fs.appendFileSync("output_log.txt", formattedOutput);
-
-    let interactions = [];
-    try {
-      interactions = JSON.parse(fs.readFileSync("interactions.json", "utf-8") || "[]");
-    } catch (err) {
-      console.warn("Failed to read interactions.json:", err.message);
-    }
-    interactions.push({ prompt, response: outputText, language: language || "en-US" });
-    fs.writeFileSync("interactions.json", JSON.stringify(interactions, null, 2));
 
     res.json({
       response: outputText,
@@ -91,6 +82,7 @@ app.get("/api/gemini", async (req, res) => {
   }
 });
 
+// Store interaction (optional fallback)
 app.post("/api/store-interaction", (req, res) => {
   const { prompt, response, language } = req.body;
   const interaction = { prompt, response, language: language || "en-US" };
@@ -106,6 +98,7 @@ app.post("/api/store-interaction", (req, res) => {
   }
 });
 
+// Suggested Prompts
 app.get("/api/suggested-prompts", async (req, res) => {
   const prompt = "Give me some suggested prompts for a chatbot.";
 
@@ -125,9 +118,8 @@ app.get("/api/suggested-prompts", async (req, res) => {
 });
 
 // ===================================
-// 🎨 IMAGE GENERATION ENDPOINT
+// 🎨 IMAGE GENERATION (Unchanged)
 // ===================================
-
 const imageModel = imageAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp-image-generation",
 });
@@ -148,7 +140,6 @@ app.post("/generate", async (req, res) => {
 
     if (image && image.data && image.mimeType) {
       console.log("🎨 Editing image with prompt:", prompt);
-
       const contents = [{
         role: "user",
         parts: [
@@ -168,7 +159,6 @@ app.post("/generate", async (req, res) => {
       });
     } else {
       console.log("✨ Generating image from prompt:", prompt);
-
       result = await imageModel.generateContent({
         contents: [{
           role: "user",
@@ -211,15 +201,12 @@ app.post("/generate", async (req, res) => {
 });
 
 // ===================================
-// 🌐 404 Fallback
+// 🔚 Fallback
 // ===================================
 app.use((req, res) => {
   res.status(404).send("<h1>404 - Page Not Found</h1>");
 });
 
-// ===================================
-// 🚀 Start Server
-// ===================================
 app.listen(PORT, () => {
   console.log(`🚀 Unified Server running at http://localhost:${PORT}`);
 });
