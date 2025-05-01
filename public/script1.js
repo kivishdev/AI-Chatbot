@@ -17,61 +17,54 @@ const autoResizeTextarea = () => {
     inputField.style.height = 'auto';
     inputField.style.height = (inputField.scrollHeight) + 'px';
     
-    // Limit max height
     if (inputField.scrollHeight > 150) {
         inputField.style.overflowY = 'auto';
     } else {
         inputField.style.overflowY = 'hidden';
     }
 };
-
-// Initialize auto-resize
 inputField.addEventListener('input', autoResizeTextarea);
 
-// Load marked.min.js (assumed to be local)
+// Load marked.min.js and Prism.js
 const script = document.createElement('script');
 script.src = 'marked.min.js';
 document.head.appendChild(script);
 
-// Load Prism.js for code highlighting
 const prismScript = document.createElement('script');
-prismScript.src = 'prism.min.js'; // Updated to local file in same directory
+prismScript.src = 'prism.min.js';
 document.head.appendChild(prismScript);
 
 const prismCSS = document.createElement('link');
 prismCSS.rel = 'stylesheet';
-prismCSS.href = 'prism.min.css'; // Updated to local file in same directory
+prismCSS.href = 'prism.min.css';
 document.head.appendChild(prismCSS);
 
-// Toggle the hamburger menu dropdown
+// Toggle hamburger menu dropdown
 hamburgerMenu.addEventListener('click', (e) => {
     e.stopPropagation();
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 });
-
-// Close dropdown when clicking outside
 document.addEventListener('click', () => {
     dropdownMenu.style.display = 'none';
 });
 
-// Toggle sidebar on mobile
+// Toggle sidebar
 toggleSidebarBtn.addEventListener('click', () => {
     sidebar.classList.toggle('open');
 });
 
-// New chat functionality
+// New chat
 newChatBtn.addEventListener('click', () => {
     clearChat();
     inputField.focus();
 });
 
-// Attach file button (placeholder functionality)
+// Attach file placeholder
 attachFileBtn.addEventListener('click', () => {
-    // This is a placeholder for file attachment functionality
     addBotMessage("File attachment functionality will be implemented soon!");
 });
 
-// Event Listeners for submission
+// Submission handlers
 submitButton.addEventListener('click', handleSubmit);
 inputField.addEventListener('keypress', function(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -83,66 +76,46 @@ inputField.addEventListener('keypress', function(event) {
 // Clear chat button
 clearChatButton.addEventListener('click', clearChat);
 
-// Handle voice input
+// Voice input
 voiceButton.addEventListener('click', startVoiceRecognition);
 
-// Initialize with welcome message if chat is empty
+// Welcome message
 if (chatDisplayArea.children.length === 0) {
     displayWelcomeMessage();
 }
 
-// Handle form submission
+// Submit logic
 async function handleSubmit() {
     const prompt = inputField.value.trim();
     
     if (prompt) {
-        // Add user message to chat
         addUserMessage(prompt);
         inputField.value = '';
-        inputField.style.height = 'auto'; // Reset height
-        
-        // Show typing indicator
+        inputField.style.height = 'auto';
+
         const typingIndicator = showTypingIndicator();
-        
+
         try {
-            // Update status
             updateStatus('typing', 'Daksha AI is typing...');
-            console.log('Fetching response for prompt:', prompt);
-            
-            // Get response from Gemini
             const response = await fetchGeminiResponse(prompt);
-            console.log('Response received:', response);
-            
-            // Remove typing indicator
             chatDisplayArea.removeChild(typingIndicator);
-            
-            // Add bot response to chat
             addBotMessage(response);
-            
+            storeInHistory(prompt, response); // ✅ Re-added for history.html
         } catch (error) {
-            // Remove typing indicator
             chatDisplayArea.removeChild(typingIndicator);
-            
-            // Show error message
             addBotMessage('Sorry, I encountered an error. Please try again later.');
-            
-            // Update status to error
             updateStatus('error', 'Connection error');
             console.error('Error during fetch:', error.message);
         } finally {
-            // Reset status to ready regardless of success or failure
             setTimeout(() => {
                 updateStatus('ready', 'Daksha AI is ready');
-                console.log('Status reset to ready');
             }, 1000);
         }
-        
-        // Scroll to bottom
+
         scrollToBottom();
     }
 }
 
-// Display welcome message
 function displayWelcomeMessage() {
     chatDisplayArea.innerHTML = `
         <div class="welcome-message">
@@ -153,15 +126,11 @@ function displayWelcomeMessage() {
     `;
 }
 
-// Clear chat function
 function clearChat() {
     chatDisplayArea.innerHTML = '';
     displayWelcomeMessage();
-    // Optional: Clear local chat history if needed
-    // localStorage.removeItem('currentChat');
 }
 
-// Add user message to chat
 function addUserMessage(message) {
     const messageBox = document.createElement('div');
     messageBox.className = 'message-box-container';
@@ -177,7 +146,6 @@ function addUserMessage(message) {
     scrollToBottom();
 }
 
-// Add bot message to chat
 function addBotMessage(message) {
     const messageBox = document.createElement('div');
     messageBox.className = 'message-box-container';
@@ -191,29 +159,24 @@ function addBotMessage(message) {
         </div>
     `;
     chatDisplayArea.appendChild(messageBox);
-    
-    // Add event listeners for actions
+
     const readAloudIcon = messageBox.querySelector('.read-aloud-icon');
     const copyIcon = messageBox.querySelector('.copy-icon');
     const messageContent = messageBox.querySelector('.message-content');
-    
-    // Parse markdown and render
+
     const parsedMessage = marked.parse(message || '', {
-        breaks: true, // Convert newlines to <br>
-        gfm: true // Enable GitHub Flavored Markdown
+        breaks: true,
+        gfm: true
     });
-    messageContent.innerHTML = parsedMessage || message; // Fallback to plain text if parsing fails
-    
-    // Highlight code blocks with Prism.js
+    messageContent.innerHTML = parsedMessage || message;
+
     Prism.highlightAllUnder(messageContent);
-    
-    // Read aloud functionality
+
     readAloudIcon.addEventListener('click', () => {
         const utterance = new SpeechSynthesisUtterance(messageContent.textContent || message);
         speechSynthesis.speak(utterance);
     });
-    
-    // Copy to clipboard functionality (copy rendered content)
+
     copyIcon.addEventListener('click', () => {
         const textToCopy = messageContent.textContent.trim();
         if (textToCopy) {
@@ -231,11 +194,10 @@ function addBotMessage(message) {
             addBotMessage('No content available to copy.');
         }
     });
-    
+
     scrollToBottom();
 }
 
-// Show typing indicator
 function showTypingIndicator() {
     const typingIndicator = document.createElement('div');
     typingIndicator.className = 'typing-indicator';
@@ -249,13 +211,11 @@ function showTypingIndicator() {
     return typingIndicator;
 }
 
-// Update status indicator
 function updateStatus(status, text) {
     statusIndicator.className = `status-indicator ${status}`;
     statusIndicator.querySelector('.status-text').textContent = text;
 }
 
-// Voice recognition
 async function startVoiceRecognition() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
@@ -263,16 +223,14 @@ async function startVoiceRecognition() {
     }
 
     try {
-        // Request microphone permission
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(track => track.stop()); // Stop the stream after permission is granted
+        stream.getTracks().forEach(track => track.stop());
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
-        // Visual feedback
         voiceButton.classList.add('recording');
         voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
         updateStatus('typing', 'Listening...');
@@ -299,20 +257,17 @@ async function startVoiceRecognition() {
             setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
         };
     } catch (error) {
-        console.error('Microphone permission denied or error:', error.message);
-        addBotMessage('Microphone access denied. Please allow microphone permission to use voice input.');
+        console.error('Microphone error:', error.message);
+        addBotMessage('Microphone access denied. Please allow microphone permission.');
         updateStatus('error', 'Permission denied');
         setTimeout(() => updateStatus('ready', 'Daksha AI is ready'), 3000);
     }
 }
 
-// Fetch Gemini Response
 async function fetchGeminiResponse(prompt) {
     try {
         const response = await fetch(`/api/gemini?prompt=${encodeURIComponent(prompt)}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch Gemini response');
-        }
+        if (!response.ok) throw new Error('Failed to fetch Gemini response');
         const data = await response.json();
         return data.response || 'I couldn\'t generate a response. Please try again.';
     } catch (error) {
@@ -321,31 +276,27 @@ async function fetchGeminiResponse(prompt) {
     }
 }
 
-// Fetch Suggested Prompts
 async function fetchSuggestedPrompts() {
     try {
         const response = await fetch('/api/suggested-prompts');
-        if (!response.ok) {
-            throw new Error('Failed to fetch suggested prompts');
-        }
+        if (!response.ok) throw new Error('Failed to fetch prompts');
+
         const data = await response.json();
-        const suggestedPromptsContainer = document.querySelector('.suggested-prompts');
-        suggestedPromptsContainer.innerHTML = ''; // Clear existing prompts
+        const container = document.querySelector('.suggested-prompts');
+        container.innerHTML = '';
 
         data.prompts.forEach(prompt => {
-            const promptElement = document.createElement('div');
-            promptElement.className = 'prompt';
-            promptElement.textContent = prompt;
-            promptElement.addEventListener('click', () => {
+            const el = document.createElement('div');
+            el.className = 'prompt';
+            el.textContent = prompt;
+            el.addEventListener('click', () => {
                 inputField.value = prompt;
                 handleSubmit();
             });
-            suggestedPromptsContainer.appendChild(promptElement);
+            container.appendChild(el);
         });
-    } catch (error) {
-        console.error('Error:', error.message);
-        // Fallback prompts
-        const fallbackPrompts = [
+    } catch {
+        const fallback = [
             "What's the weather like today?",
             "Tell me a fun fact",
             "Explain quantum computing simply",
@@ -353,66 +304,54 @@ async function fetchSuggestedPrompts() {
             "How does AI work?",
             "Write a short story"
         ];
-        
-        const suggestedPromptsContainer = document.querySelector('.suggested-prompts');
-        suggestedPromptsContainer.innerHTML = ''; // Clear existing prompts
-        
-        fallbackPrompts.forEach(prompt => {
-            const promptElement = document.createElement('div');
-            promptElement.className = 'prompt';
-            promptElement.textContent = prompt;
-            promptElement.addEventListener('click', () => {
+        const container = document.querySelector('.suggested-prompts');
+        container.innerHTML = '';
+        fallback.forEach(prompt => {
+            const el = document.createElement('div');
+            el.className = 'prompt';
+            el.textContent = prompt;
+            el.addEventListener('click', () => {
                 inputField.value = prompt;
                 handleSubmit();
             });
-            suggestedPromptsContainer.appendChild(promptElement);
+            container.appendChild(el);
         });
     }
 }
 
-// Store in history
-function storeInHistory(prompt, response) {
-    let history = JSON.parse(localStorage.getItem('history')) || [];
-    const timestamp = new Date().toISOString();
-    
-    history.push({ prompt, response, timestamp });
-    localStorage.setItem('history', JSON.stringify(history));
-    
-    // Update sidebar recent chats (optional)
-    updateRecentChats(prompt, timestamp);
-}
-
-// Update recent chats in sidebar
-
-
-// Scroll to bottom of chat
 function scrollToBottom() {
     chatDisplayArea.scrollTop = chatDisplayArea.scrollHeight;
 }
 
-// Initialize
+function storeInHistory(prompt, response) {
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+    const timestamp = new Date().toISOString();
+    history.push({ prompt, response, timestamp });
+    localStorage.setItem('history', JSON.stringify(history));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchSuggestedPrompts();
-    
-    // Focus input field on load
     inputField.focus();
-    
-    // Add status text element if not present
+
     if (!document.querySelector('.status-text')) {
         const statusText = document.createElement('span');
         statusText.className = 'status-text';
         statusText.textContent = 'Daksha AI is ready';
         statusIndicator.appendChild(statusText);
     }
-    
-    // Load recent chats from localStorage
-    
 });
 
-// Load recent chats from history in localStorage
+// Mobile: auto-collapse sidebar when clicking outside
+document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 900 && sidebar.classList.contains('open')) {
+        if (!sidebar.contains(e.target) && !toggleSidebarBtn.contains(e.target)) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
 
-
-// Keyboard shortcut for focusing input
+// Keyboard shortcut
 document.addEventListener('keydown', (e) => {
     if (e.key === '/' && document.activeElement !== inputField) {
         e.preventDefault();
