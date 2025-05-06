@@ -27,6 +27,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
   // Prevent clickjacking attacks
   res.setHeader("X-Frame-Options", "DENY");
+  // Enable XSS protection in browsers
+  res.setHeader("Content-Security-Policy",
+    "default-src 'self'; " +
+    "script-src 'self'; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self'; " +
+    "object-src 'none';"
+  );
   // Prevent MIME type sniffing
   res.setHeader("X-Content-Type-Options", "nosniff");
   // Content Security Policy
