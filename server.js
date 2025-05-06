@@ -8,6 +8,7 @@ import helmet from "helmet";
 import { fileURLToPath } from "node:url";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleGenAI } from "@google/genai";
+import crypto from "crypto";
 
 dotenv.config();
 const app = express();
@@ -19,8 +20,21 @@ const __dirname = path.dirname(__filename);
 // Middleware
 app.use(cors());
 app.use(helmet());
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "5mb" }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// Set secure HTTP headers
+app.use((req, res, next) => {
+  // Prevent clickjacking attacks
+  res.setHeader("X-Frame-Options", "DENY");
+  // Enable XSS protection in browsers
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  // Prevent MIME type sniffing
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  // Content Security Policy
+  res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data:;");
+  next();
+});
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "image.html"));
