@@ -73,7 +73,7 @@ app.post("/api/gemini", async (req, res) => {
 
   try {
     const response = await textAI.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash-preview-05-20",
       contents: messages,
       tools: [{ googleSearch: { force: true } }],
     });
