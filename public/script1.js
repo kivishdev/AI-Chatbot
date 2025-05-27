@@ -70,7 +70,7 @@ class VoiceManager {
                 // Process all results from the current event
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const result = event.results[i];
-                    const transcript = result.transcript.trim();
+                    const transcript = result[0].transcript.trim();
                     
                     console.log(`Result ${i}: "${transcript}" (final: ${result.isFinal})`);
                     
@@ -500,6 +500,7 @@ class ChatManager {
                 this.loadChat(chat.id);
                 if (window.innerWidth <= 768) {
                     sidebar.classList.remove('open');
+                    document.body.style.overflow = ''; // Restore body scroll
                 }
             });
             
@@ -924,26 +925,44 @@ function scrollToBottom() {
     }
 }
 
-// Enhanced mobile sidebar management
+// Simplified Mobile Sidebar Management
 function setupSidebarCloseOnOutsideClick() {
-    const handleOutsideClick = (e) => {
-        if (window.innerWidth <= 768 && sidebar?.classList.contains('open')) {
-            if (!sidebar.contains(e.target) && !toggleSidebarBtn?.contains(e.target)) {
-                sidebar.classList.remove('open');
-            }
-        }
-    };
-
-    document.addEventListener('click', handleOutsideClick);
-    document.addEventListener('touchstart', handleOutsideClick);
-
-    sidebarClose?.addEventListener('click', () => {
-        sidebar?.classList.remove('open');
-    });
-
-    sidebarClose?.addEventListener('touchstart', (e) => {
+    // Close sidebar when clicking the cross button
+    sidebarClose?.addEventListener('click', (e) => {
+        console.log('Cross button clicked');
         e.preventDefault();
         sidebar?.classList.remove('open');
+        document.body.style.overflow = ''; // Restore body scroll
+    });
+
+    // Handle touchstart for mobile compatibility
+    sidebarClose?.addEventListener('touchstart', (e) => {
+        console.log('Cross button touched');
+        e.preventDefault();
+        sidebar?.classList.remove('open');
+        document.body.style.overflow = ''; // Restore body scroll
+    });
+
+    // Close sidebar on outside click/touch
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768 && sidebar?.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && !toggleSidebarBtn?.contains(e.target)) {
+                console.log('Outside click detected, closing sidebar');
+                sidebar.classList.remove('open');
+                document.body.style.overflow = ''; // Restore body scroll
+            }
+        }
+    });
+
+    // Handle touchstart for outside touch
+    document.addEventListener('touchstart', (e) => {
+        if (window.innerWidth <= 768 && sidebar?.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && !toggleSidebarBtn?.contains(e.target)) {
+                console.log('Outside touch detected, closing sidebar');
+                sidebar.classList.remove('open');
+                document.body.style.overflow = ''; // Restore body scroll
+            }
+        }
     });
 }
 
@@ -1002,11 +1021,18 @@ function setupKeyboardShortcuts() {
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Sidebar initial classList:', sidebar?.classList.toString());
     applyTheme(currentTheme);
     applySettings();
     setupSidebarCloseOnOutsideClick();
     setupKeyboardShortcuts();
     bindSuggestionEvents();
+    
+    // Ensure sidebar is closed on mobile by default
+    if (window.innerWidth <= 768 && sidebar) {
+        sidebar.classList.remove('open');
+        document.body.style.overflow = ''; // Ensure body scroll is enabled
+    }
     
     userInput?.focus();
     
@@ -1026,7 +1052,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Event Listeners
 toggleSidebarBtn?.addEventListener('click', () => {
-    sidebar?.classList.toggle('open');
+    console.log('Toggle sidebar clicked');
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    }
 });
 
 newChatBtn?.addEventListener('click', () => {
@@ -1035,6 +1065,7 @@ newChatBtn?.addEventListener('click', () => {
     userInput?.focus();
     if (window.innerWidth <= 768) {
         sidebar?.classList.remove('open');
+        document.body.style.overflow = ''; // Restore body scroll
     }
 });
 
@@ -1052,6 +1083,7 @@ settingsBtn?.addEventListener('click', () => {
     }
     if (window.innerWidth <= 768) {
         sidebar?.classList.remove('open');
+        document.body.style.overflow = ''; // Restore body scroll
     }
 });
 
@@ -1155,27 +1187,9 @@ window.addEventListener('resize', Utils.throttle(() => {
     
     if (window.innerWidth > 768 && sidebar?.classList.contains('open')) {
         sidebar.classList.remove('open');
+        document.body.style.overflow = ''; // Restore body scroll
     }
 }, 250));
-
-// Prevent body scroll when sidebar is open on mobile
-const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            if (window.innerWidth <= 768) {
-                if (sidebar?.classList.contains('open')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            }
-        }
-    });
-});
-
-if (sidebar) {
-    observer.observe(sidebar, { attributes: true });
-}
 
 // Enhanced error handling
 window.addEventListener('error', (e) => {
