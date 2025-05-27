@@ -2,142 +2,219 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daksha AI - Intelligent Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Daksha AI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="prism-tomorrow.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Main App Container -->
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="Designer.png" alt="Daksha AI Logo" class="logo">
-                <h2>Daksha AI</h2>
-            </div>
-
-            <button id="new-chat" class="new-chat-btn">
-                <i class="fas fa-plus"></i>
-                <span>New Chat</span>
-            </button>
-
-            <div class="sidebar-section">
-                <h3>Recent Chats</h3>
-                <div id="recent-chats" class="recent-chats">
-                    <!-- Recent chats will be populated here -->
-                    <div class="recent-chat-item">
-                        <i class="fas fa-comments"></i>
-                        <span>Welcome Chat</span>
-                    </div>
+                <div class="logo">
+                    <img src="designer.png" alt="Daksha AI Logo" class="logo-image" />
+                    <span>Daksha AI</span>
                 </div>
+                <button class="sidebar-close" id="sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <div class="sidebar-section">
-                <h3>Tools</h3>
-                <div class="tools-list">
-                    <div class="tool-item">
+            <div class="sidebar-content">
+                <button class="new-chat-btn" id="new-chat">
+                    <i class="fas fa-plus"></i>
+                    New Chat
+                </button>
+
+                <nav class="sidebar-nav">
+                    <a href="history.html" class="nav-item">
+                        <i class="fas fa-history"></i>
+                        <span>Chat History</span>
+                        <i class="fas fa-external-link-alt nav-external"></i>
+                    </a>
+                    <a href="image.html" class="nav-item">
                         <i class="fas fa-image"></i>
-                        <span><a href="image.html" style="text-decoration: none; color: inherit;">Image Understanding</a></span>
-                    </div>
-                </div>
-            </div>
-            <div class="tool-item">
-                <i class="fas fa-history"></i>
-                <span><a href="history.html" style="text-decoration: none; color: inherit;">Chat History</a></span>
-            </div>
+                        <span>Image Understanding</span>
+                        <i class="fas fa-external-link-alt nav-external"></i>
+                    </a>
+                    <button class="nav-item" id="export-chat">
+                        <i class="fas fa-download"></i>
+                        <span>Export Chat</span>
+                    </button>
+                    <button class="nav-item" id="settings-btn">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                    <button class="nav-item" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                        <span>Dark Mode</span>
+                    </button>
+                </nav>
 
-            <div class="sidebar-footer">
-                <div class="settings-button" id="settings-button">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                <div class="recent-chats-section">
+                    <h4>Recent Conversations</h4>
+                    <div class="recent-chats" id="recent-chats">
+                        <!-- Recent chats will be populated here -->
+                    </div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="main-header">
-                <div class="header-controls">
-                    <button id="toggle-sidebar" class="toggle-sidebar">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="toggle-sidebar" id="toggle-sidebar">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="current-chat-info">
-                        <h2>Chat with Daksha AI</h2>
+                    <div class="chat-info">
+                        <h1>Daksha AI</h1>
+                        <div class="status-indicator" id="status-indicator">
+                            <div class="status-dot"></div>
+                            <span class="status-text">Ready</span>
+                        </div>
                     </div>
                 </div>
                 <div class="header-actions">
-                    <div id="status-indicator" class="status-indicator ready">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Daksha AI is ready</span>
-                    </div>
-                    <div class="header-buttons">
-                        <button id="clear-chat" class="action-button" title="Clear chat">
-                            <i class="fas fa-trash-alt"></i>
+                    <button class="header-btn" id="copy-chat" title="Copy Chat">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="header-btn" id="clear-chat" title="Clear Chat">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <div class="dropdown-container">
+                        <button class="header-btn" id="menu-btn" title="More Options">
+                            <i class="fas fa-ellipsis-v"></i>
                         </button>
-                        <div class="menu-container">
-                            <button id="hamburger-menu" class="action-button" title="Menu">
-                                <i class="fas fa-ellipsis-v"></i>
+                        <div class="dropdown-menu" id="dropdown-menu">
+                            <button class="dropdown-item">
+                                <i class="fas fa-share"></i>
+                                Share Chat
                             </button>
-                            <div id="dropdown-menu" class="dropdown-menu">
-                                <div class="dropdown-item">
-                                    <i class="fas fa-download"></i>
-                                    <span>Export Chat</span>
-                                </div>
-                                <div class="dropdown-item">
-                                    <i class="fas fa-share-alt"></i>
-                                    <span>Share</span>
-                                </div>
-                                <div class="dropdown-item">
-                                    <i class="fas fa-info-circle"></i>
-                                    <span><a href="About Us.html" style="text-decoration: none; color: inherit;">About Daksha AI</a></span>
-                                </div>
-                            </div>
+                            <button class="dropdown-item">
+                                <i class="fas fa-bookmark"></i>
+                                Save Chat
+                            </button>
+                            <button class="dropdown-item">
+                                <i class="fas fa-print"></i>
+                                Print
+                            </button>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <div id="chat-display-area" class="chat-display-area">
-                <!-- Chat messages will appear here -->
+            <!-- Chat Area -->
+            <div class="chat-area" id="chat-area">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <img src="designer.png" alt="Daksha AI" class="welcome-logo" />
+                    </div>
+                    <h2>Welcome to Daksha AI</h2>
+                    <p>Your intelligent assistant powered by advanced AI. Ask me anything!</p>
+                    
+                    <div class="quick-suggestions">
+                        <button class="suggestion-btn" data-prompt="Explain quantum computing in simple terms">
+                            <i class="fas fa-atom"></i>
+                            Quantum Computing
+                        </button>
+                        <button class="suggestion-btn" data-prompt="Write a Python function to sort an array">
+                            <i class="fab fa-python"></i>
+                            Code Helper
+                        </button>
+                        <button class="suggestion-btn" data-prompt="Plan a weekend trip">
+                            <i class="fas fa-map"></i>
+                            Trip Planning
+                        </button>
+                    </div>
+                </div>
             </div>
 
+            <!-- Input Area -->
             <div class="input-area">
-                <div class="suggested-prompts-container">
-                    <div class="suggested-prompts">
-                        <!-- Suggested prompts will be populated here -->
-                    </div>
-                </div>
-
                 <div class="input-container">
-                    <textarea id="gemini-input" placeholder="Ask me anything... (Press '/' for quick focus)" rows="1"></textarea>
-                    <div class="input-buttons">
-                        <button id="voice-input" class="input-action-button" title="Voice input">
-                            <i class="fas fa-microphone"></i>
-                        </button>
-                        <button id="attach-file" class="input-action-button" title="Attach file">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <button id="gemini-submit" class="submit-button" title="Send message">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="user-input" 
+                            placeholder="Type your message..." 
+                            rows="1"
+                            maxlength="4000"
+                        ></textarea>
+                        <div class="input-footer">
+                            <span class="char-count" id="char-count">0/4000</span>
+                            <div class="input-shortcuts">
+                                <kbd>Enter</kbd> to send • <kbd>Shift+Enter</kbd> for new line
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="input-footer">
-                    <span class="keyboard-shortcut">Press / to focus • Shift+Enter for new line</span>
-                    <span class="powered-by">Powered by Gemini API</span>
+                    <button class="input-btn" id="voice-input" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="send-btn" id="send-btn" title="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-modal" id="close-settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Font Size</label>
+                    <select id="font-size">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Auto Scroll</label>
+                    <input type="checkbox" id="auto-scroll" checked>
+                </div>
+                <div class="setting-group">
+                    <label>Sound Effects</label>
+                    <input type="checkbox" id="sound-effects">
+                </div>
+                <div class="setting-group">
+                    <label>Voice Language</label>
+                    <select id="voice-language">
+                        <option value="en-US">English (US)</option>
+                        <option value="en-GB">English (UK)</option>
+                        <option value="es-ES">Spanish</option>
+                        <option value="fr-FR">French</option>
+                        <option value="hi-IN">Hindi</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
     <!-- Scripts -->
     <script src="marked.min.js"></script>
     <script src="prism.min.js"></script>
+    <script src="prism-javascript.min.js"></script>
+    <script src="prism-python.min.js"></script>
+    <script src="prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
     <script src="script1.js"></script>
 </body>
 </html>
